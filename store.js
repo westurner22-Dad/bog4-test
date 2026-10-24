@@ -116,8 +116,11 @@ function firebaseStore(gameId, cfg) {
     watchMap(kind, cb) {   // kind: requests | rulings | batches
       const u = `${base}/${kind}/${encodeURIComponent(gameId)}.json`;
       const pull = () => fetch(u).then(r => r.ok ? r.json() : null).then(o => cb(o || {})).catch(() => {});
-      const es = new EventSource(u); es.addEventListener('put', pull); es.addEventListener('patch', pull);
-      return () => es.close();
+      // Polled, not streamed: browsers allow ~6 HTTP/1.1 connections per host, and 5 EventSources per tab starved a second
+      // tab in the same browser (two seats on one device hung). Now each tab streams only the game doc + chat.
+      pull(); const t = setInterval(pull, kind === 'requests' ? 5000 : 20000), f = () => document.visibilityState === 'visible' && pull();
+      document.addEventListener('visibilitychange', f);
+      return () => { clearInterval(t); document.removeEventListener('visibilitychange', f); };
     }
   };
 }
