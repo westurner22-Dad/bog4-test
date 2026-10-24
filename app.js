@@ -32,7 +32,7 @@ function renderBuilder() {
   sessionStorage.setItem('bog4b:' + GID + P, JSON.stringify(bstate));
   if (bstate.step === 'who') return `<div class="card"><h2>Who are you?</h2>
     <label>Race<select id="race">${D.races.races.map(r => `<option value="${esc(r.id)}">${esc(r.name)}</option>`).join('')}</select></label>
-    <label>Name<input id="name" maxlength="40" autocomplete="off"></label><button id="go">Start in ${esc(B.homeland || '')} (barefoot)</button></div>`;
+    <label>Name<input id="name" maxlength="40" autocomplete="off" value="${esc(bstate.draft || '')}"></label><button id="go">Start in ${esc(B.homeland || '')} (barefoot)</button></div>`;
   const L = order(), i = bstate.picks.length;
   if (i < L.length) { const s = L[i];
     return `<div class="card"><h2>${i + 1}/${L.length}: ${esc(s.title || '')}</h2><p>${esc(s.text)}</p>
@@ -53,6 +53,8 @@ function renderBuilder() {
   return `<div class="card">${lastResult}<p id="hook">${esc(h ? h.text : '')}</p><button id="finish">See my character</button></div>`;
 }
 function bindBuilder() {
+  $('#name') && ($('#name').oninput = () => { bstate.draft = $('#name').value; sessionStorage.setItem('bog4b:' + GID + P, JSON.stringify(bstate)); });
+  $('#race') && bstate.draftRace && ($('#race').value = bstate.draftRace); $('#race') && ($('#race').onchange = () => { bstate.draftRace = $('#race').value; });
   $('#go') && ($('#go').onclick = () => { const n = $('#name').value.trim(); if (!n) return $('#name').focus();
     Object.assign(bstate, { step: 'pick', name: n, race: $('#race').value }); render(); });
   document.querySelectorAll('[data-b]').forEach(b => b.onclick = () => {
