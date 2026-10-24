@@ -232,21 +232,23 @@
   const canShop = pl => !!(pl && pl.sheet) && TOWN.includes(pl.location || 'town');
   // ---- party turns (Wes round 7) ----
   // Before the tavern everything is async. In the tavern and after, ready players (stage tavern) take turns in seat order.
-  // Play starts when every seat that has been opened is ready, or when a waiting player starts without the others
-  // (allowed at once if nobody else has opened the game, after waitFallbackMs if someone has). Late joiners slot into the
-  // rotation once they leave the store. A holder who can't act (ghost, no turn loaded) is skipped automatically; a holder
-  // idle for turnTimeoutMs can be skipped by anyone who can act. Nothing here can softlock: see test/unit + party_sim.
-  const PARTY = { waitFallbackMs: 12 * 3600e3, turnTimeoutMs: 24 * 3600e3 };
-  const seatsOf = doc => Object.keys(doc.players || {}).map(Number).sort((a, b) => a - b);
+  // Play starts only when every seat that has been opened is ready in the tavern (Wes round 2 #1: the quest never starts
+  // until ALL adventurers are present). Players cannot start without the others; only the GM can, via a 'party_start'
+  // ruling (gm_write --start-party <gid> [--drop-seat N]), which starts the party and optionally drops absent seats.
+  // Late joiners slot into the rotation once they leave the store. A holder who can't act (ghost, no turn loaded, dropped)
+  // is skipped automatically; a holder idle for turnTimeoutMs can be skipped by anyone who can act. See test/unit + party_sim.
+  const PARTY = { turnTimeoutMs: 24 * 3600e3 };
+  const seatsOf = doc => Object.keys(doc.players || {}).map(Number).filter(q => !doc.players[q].dropped).sort((a, b) => a - b);
   function turnInfo(doc, queues, p, now = Date.now()) {
     const pl = doc.players[p], st = stageOf(pl), party = doc.party || {};
     if (st !== 'tavern') return { state: st };
+    if (pl.dropped) return { state: 'free', holder: p, dropped: true };
     const seats = seatsOf(doc), ready = seats.filter(q => stageOf(doc.players[q]) === 'tavern');
     const canAct = q => !isGhost(doc, q) && !!currentTurn(doc, queues, q);
     if (!party.started_at) {
       const pending = seats.filter(q => !ready.includes(q));
-      if (pending.length) return { state: 'waiting', waitingFor: pending, canStartSolo: now - (pl.ready_at || 0) >= PARTY.waitFallbackMs };
-      if (ready.length === 1) return { state: 'lobby', canStartSolo: true };
+      if (pending.length) return { state: 'waiting', waitingFor: pending };
+      if (ready.length === 1) return { state: 'lobby' };
     }
     if (!canAct(p)) return { state: 'free', holder: p };   // ghost / GM asleep screens; never blocks anyone
     const ord = ready, start = ord.includes(party.turn) ? ord.indexOf(party.turn) : 0;
@@ -254,10 +256,13 @@
     if (holder === p) return { state: 'yours', holder };
     return { state: 'theirs', holder, canSkip: now - (party.last_move_at || party.started_at || Math.max(0, ...ready.map(q => doc.players[q].ready_at || 0))) >= PARTY.turnTimeoutMs };
   }
-  function startWithout(doc0, queues, p, now = Date.now()) {
-    const doc = clone(doc0), i = turnInfo(doc, queues, p, now);
-    if (!((i.state === 'lobby' || i.state === 'waiting') && i.canStartSolo)) throw new Error('cannot start yet');
-    doc.party = Object.assign({}, doc.party, { started_at: now, turn: p, last_move_at: now, started_by: p }); return doc;
+  // GM-only start (applied from a 'party_start' ruling). drop = seats to remove from the turn order (absent players).
+  function gmStartParty(doc0, ru, now = Date.now()) {
+    const doc = clone(doc0);
+    for (const q of ru.drop || []) if (doc.players[q]) doc.players[q].dropped = true;
+    for (const q of ru.add || []) if (doc.players[q]) delete doc.players[q].dropped;
+    if (!(doc.party && doc.party.started_at)) doc.party = Object.assign({}, doc.party, { started_at: ru.ruled_at || now, turn: null, last_move_at: ru.ruled_at || now, started_by: 'gm' });
+    return doc;
   }
   function takeTurn(doc0, queues, p, i, rng = Math.random, derpCfg = null, now = Date.now()) {
     const info = turnInfo(doc0, queues, p, now);
@@ -302,6 +307,7 @@
       const rq = (reqs || {})[id] || (ru && ru.gm && Number.isInteger(ru.p) ? { p: ru.p } : null);
       if (doc.applied_rulings[id] || !rq) continue;
       if (ru.ruling === 'roll') continue;
+      if (ru.ruling === 'party_start') { if (ru.gm) Object.assign(doc, gmStartParty(doc, ru)); doc.applied_rulings[id] = true; continue; }
       const pl = doc.players[rq.p];
       if (ru.ruling === 'granted' && pl && pl.sheet) applyEffects(doc, rq.p, ru.effects);
       doc.applied_rulings[id] = true;
@@ -341,7 +347,7 @@
     }
     return d;
   }
-  const api = { PARTY, turnInfo, startWithout, takeTurn, stageOf, leaveStore, canShop, normalize, CLASSES, winBonus, freePoints, allocCheck, baseFor, CAP, builderDc, builderRoll, scenarioOrder, tally, buildSheet, derived, modFor, buyable, buy, shopCategory, SHOP_CATS, levelUp, validateBatch, mergeBatches,
+  const api = { PARTY, turnInfo, gmStartParty, takeTurn, stageOf, leaveStore, canShop, normalize, CLASSES, winBonus, freePoints, allocCheck, baseFor, CAP, builderDc, builderRoll, scenarioOrder, tally, buildSheet, derived, modFor, buyable, buy, shopCategory, SHOP_CATS, levelUp, validateBatch, mergeBatches,
     cfg, RESPAWN_FALLBACK, currentTurn, isGhost, playTurn, applyEffects, respawnAll, label, newGame, requestLog, applyRulings, rollRequest, freeSoloGhosts, freeGhostId, toCp };
   if (typeof module !== 'undefined') module.exports = api; else root.Engine = api;
 })(this);

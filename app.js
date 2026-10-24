@@ -93,27 +93,36 @@ function renderTurn() {
   const doing = q => ({ build: 'building their character', store: 'shopping' })[Engine.stageOf(doc.players[q])] || 'getting ready';
   const info = Engine.turnInfo(doc, queues, P, Date.now()), reqBox = renderReqBox();
   if (info.state === 'lobby') return `<div class="card" id="turn"><h2 id="waitp">⏳ Waiting for your party</h2><p>Nobody else has opened this game yet. Send your friend the seat-2 link:</p>
-    <p><code id="p2link">${esc(location.origin + location.pathname + '#g=' + GID + '&p=2')}</code></p><p class="dim">Once you're both in the tavern you take turns. You can also start alone; anyone who joins later slots into the turn order.</p>
-    <button id="solo">Play solo for now</button></div>` + reqBox;
+    <p><code id="p2link">${esc(location.origin + location.pathname + '#g=' + GID + '&p=2')}</code></p><p class="dim">The quest starts when every adventurer is here in the tavern; then you take turns. If someone can't make it, ask the GM to start without them.</p></div>` + reqBox;
   if (info.state === 'waiting') return `<div class="card" id="turn"><h2 id="waitp">⏳ Waiting for ${esc(info.waitingFor.map(nm).join(' and '))}</h2>
-    <p>${esc(info.waitingFor.map(q => nm(q) + ' is ' + doing(q)).join('; '))}. Turns start when everyone reaches the tavern. Until then you can still shop and chat.</p>
-    ${info.canStartSolo ? '<button id="solo">Start without them</button><p class="dim">They can still join the turn order when they arrive.</p>' : `<p class="dim">If they haven't arrived ${Math.round(Engine.PARTY.waitFallbackMs / 3600e3)} hours after you got here, you can start without them.</p>`}</div>` + reqBox;
+    <p>${esc(info.waitingFor.map(q => nm(q) + ' is ' + doing(q)).join('; '))}. The quest starts when every adventurer is here in the tavern. Until then you can still shop and chat.</p>
+    <p class="dim">If someone can't make it, ask the GM (System request below) to start without them.</p></div>` + reqBox;
   if (info.state === 'theirs' && !(info.canSkip && skipOk)) return `<div class="card" id="turn">${lastResult}<h2 id="waitturn">⏳ Waiting for ${esc(nm(info.holder))} to take their turn</h2>
     <p>You can shop${Engine.canShop(me()) ? '' : ' (in town)'}, read the sheets and chat in the meantime.</p>
-    ${info.canSkip ? `<button id="skipturn">${esc(nm(info.holder))} has been away a while: take the turn</button>` : ''}</div>` + reqBox;
+    ${info.canSkip ? `<button id="skipturn">${esc(nm(info.holder))} has been away a while: take the turn</button>` : ''}</div>` + watchBox(info.holder) + reqBox;
+  if (info.dropped) return `<div class="card" id="turn"><h2 id="dropped">The party went on without you</h2><p>The GM started the quest while you were away. Ask the GM (System request below) to add you back into the turn order.</p></div>` + reqBox;
   const banner = info.state === 'yours' && Object.keys(doc.players).length > 1 ? '<p id="yourturn" class="ok">🎯 Your turn</p>' : '';
   const turn = Engine.isGhost(doc, P) ? `<div class="card" id="turn">${lastResult}<h2 id="ghost">👻 You're a ghost, heckle away</h2><p id="ghostwait">${esc((D.builder && D.builder.ghost_wait_line) || 'The GM will bring you back tonight.')}</p></div>`
     : !t ? `<div class="card" id="turn">${lastResult}<h2>The GM is asleep.</h2><p>New turns arrive tonight.</p></div>`
     : `<div class="card" id="turn">${banner}<h2>${esc(t.title)}</h2><p>${esc(t.text)}</p>${lastResult}
       ${t.options.map((o, i) => `<button data-o="${i}">${esc(Engine.label(sh, o, D.builder.derp))}${o.roll && !sh.derp ? ` <span class="dim">(${esc(o.roll.skill)} DC ${o.roll.dc})</span>` : ''}</button>`).join('')}</div>`;
-  return turn + reqBox;
+  const other = (Engine.isGhost(doc, P) || !t) ? Object.keys(doc.players).map(Number).find(q => q !== P && doc.players[q].sheet && (() => { try { return Engine.turnInfo(doc, queues, q, Date.now()).state === 'yours'; } catch { return false; } })()) : null;
+  return turn + (other ? watchBox(other) : '') + reqBox;
+}
+// Round 2 #3: view-only, live view of what the GM narration is showing the current turn holder (and their last result).
+function watchBox(q) {
+  const x = doc.players[q]; if (!x || !x.sheet || q === P) return '';
+  const t = Engine.currentTurn(doc, queues, q), last = (x.history || []).at(-1), who = esc(x.sheet.name);
+  return `<div class="card watch" id="watch"><h2>👀 Following ${who}</h2>
+    ${last ? `<p class="dim" id="watchlast">Last: ${last.die ? `🎲 ${last.die} ${last.mod >= 0 ? '+' : ''}${last.mod} = ${last.total} vs DC ${last.dc}: ` : ''}${esc(last.text || '')}</p>` : ''}
+    ${t ? `<h3 id="watchtitle">${esc(t.title)}</h3><p id="watchtext">${esc(t.text)}</p><ol id="watchopts">${t.options.map(o => `<li>${esc(Engine.label(x.sheet, o, D.builder.derp))}${o.roll && !x.sheet.derp ? ` <span class="dim">(${esc(o.roll.skill)} DC ${o.roll.dc})</span>` : ''}</li>`).join('')}</ol>
+      <p class="dim">View only: ${who} is choosing.</p>` : `<p class="dim">${who} has no turn right now.</p>`}</div>`;
 }
 function renderReqBox() {
   return `<div class="card"><h2>⚖️ System request</h2><div class="row"><input id="reqin" maxlength="300" placeholder="Ask the GM for something…"><button id="reqgo">Ask</button></div>
     <p class="dim">The GM rules nightly. Small asks granted, big ones need a roll, story-breaking ones denied.</p></div>`;
 }
 function bindTurn() {
-  $('#solo') && ($('#solo').onclick = async () => { try { await saveWith(d => Engine.startWithout(d, queues, P, Date.now())); } catch (e) { lastResult = `<p class="bad">${esc(e.message)}</p>`; render(); } });
   $('#skipturn') && ($('#skipturn').onclick = () => { const i = Engine.turnInfo(doc, queues, P, Date.now()); if (i.canSkip) { skipOk = true; lastResult = ''; render(); } });
   $('#gostore') && ($('#gostore').onclick = () => { tab = 'store'; render(); });
   document.querySelectorAll('[data-o]').forEach(b => b.onclick = async () => {
@@ -159,13 +168,22 @@ function bindStore() { $('#leavestore') && ($('#leavestore').onclick = async () 
   catch (e) { lastResult = `<p class="bad">${esc(e.message)}</p>`; render(); } }); }
 function renderLog() {
   const L = Engine.requestLog(reqs, rulings, doc.request_rolls || {});
-  return `<div class="card"><h2>📜 System-request log</h2><div id="reqlog">${L.map(r => `<p><b>${esc(r.who)}</b>${r.gm ? ' <span class="dim">(GM ruling)</span>' : ''}: ${esc(r.text)}<br>
-    ${r.ruling && r.ruling.ruling === 'roll' && !r.roll ? (r.p === P ? `GM: roll DC ${r.ruling.dc}. ${esc(r.ruling.reason)} <button data-rr="${esc(r.id)}">🎲 Roll for it</button>` : `<span class="dim">waiting for ${esc(r.who)} to roll (DC ${r.ruling.dc})</span>`) : r.roll ? `<span class="${r.roll.ok ? 'ok' : 'bad'}">rolled ${r.roll.die}${r.roll.mod ? (r.roll.mod > 0 ? '+' : '') + r.roll.mod : ''} = ${r.roll.total} vs DC ${r.roll.dc}: ${r.roll.ok ? 'success' : 'fail'}</span>: ${esc(r.ruling.reason)}` : r.ruling ? `<span class="${r.ruling.ruling === 'denied' || r.ruling.result === 'fail' ? 'bad' : 'ok'}">${esc(r.ruling.ruling)}${r.ruling.roll ? ` (🎲 ${r.ruling.roll.total} vs DC ${r.ruling.dc})` : ''}</span>: ${esc(r.ruling.reason)}` : '<span class="dim">pending, the GM rules tonight</span>'}</p>`).join('') || '<p class="dim">No requests yet.</p>'}</div></div>`;
+  return `<div class="card"><h2>📜 Requests, actions &amp; dialogue</h2><div id="reqlog">${L.map(r => `<p${r.kind ? ` class="act" data-kind="${esc(r.kind)}"` : ''}>${r.kind === 'say' ? '💬 ' : r.kind === 'action' ? '🎭 ' : ''}<b>${esc(r.who)}</b>${r.gm ? ' <span class="dim">(GM ruling)</span>' : ''}: ${esc(r.text)}<br>
+    ${r.ruling && r.ruling.ruling === 'roll' && !r.roll ? (r.p === P ? `GM: roll DC ${r.ruling.dc}. ${esc(r.ruling.reason)} <button data-rr="${esc(r.id)}">🎲 Roll for it</button>` : `<span class="dim">waiting for ${esc(r.who)} to roll (DC ${r.ruling.dc})</span>`) : r.roll ? `<span class="${r.roll.ok ? 'ok' : 'bad'}">rolled ${r.roll.die}${r.roll.mod ? (r.roll.mod > 0 ? '+' : '') + r.roll.mod : ''} = ${r.roll.total} vs DC ${r.roll.dc}: ${r.roll.ok ? 'success' : 'fail'}</span>: ${esc(r.ruling.reason)}` : r.ruling ? `<span class="${r.ruling.ruling === 'denied' || r.ruling.result === 'fail' ? 'bad' : 'ok'}">${esc(r.ruling.ruling)}${r.ruling.roll ? ` (🎲 ${r.ruling.roll.total} vs DC ${r.ruling.dc})` : ''}</span>: ${esc(r.ruling.reason)}` : (r.kind ? '<span class="dim">the GM reads this tonight</span>' : '<span class="dim">pending, the GM rules tonight</span>')}</p>`).join('') || '<p class="dim">No requests yet.</p>'}</div></div>`;
 }
 function bindLog() { document.querySelectorAll('[data-rr]').forEach(b => b.onclick = async () => { await save(Engine.rollRequest(doc, reqs, rulings, b.dataset.rr, P)); }); }
 function renderChat() { return `<div class="card" id="chat"><h2>💬 Chat</h2><div id="chatlog">${chat.map(m => { const s = (doc.players[m.p] || {}).sheet;
   return `<p><b>${esc(s ? s.name : 'Player ' + m.p)}${m.ghost ? ' <span class="ghost">👻 ghost</span>' : ''}</b> <span class="dim">${new Date(m.ts).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span>: ${esc(m.text)}</p>`; }).join('')}</div>
-  <form class="row" id="chatform"><input id="chatin" maxlength="300" autocomplete="off" placeholder="Message everyone…"><button>Send</button></form></div>`; }
+  <form class="row" id="chatform"><input id="chatin" maxlength="300" autocomplete="off" placeholder="Message everyone…"><button>Send</button></form></div>
+  <div class="card" id="act"><h2>🎭 Action &amp; dialogue</h2><form id="actform"><div class="row"><select id="actkind"><option value="action">I do…</option><option value="say">I say…</option></select>
+    <input id="actin" maxlength="280" autocomplete="off" placeholder="Describe what your character does or says"><button>Submit</button></div></form>
+    <p class="dim">Your party sees it in chat; the GM reads it with tonight's requests and weaves it into the story (it shows in the Requests log).</p></div>`; }
+// Round 2 #2: in-character action / dialogue -> chat (party sees it now) + requests with kind (GM sees it, Requests log).
+async function sendAct(kind, v) {
+  const sh = me().sheet, t = Engine.currentTurn(doc, queues, P), txt = kind === 'say' ? `says: “${v}”` : `does: ${v}`;
+  await store.chatSend(P, (kind === 'say' ? '💬 ' : '🎭 ') + txt, Engine.isGhost(doc, P));
+  await store.requestSend({ p: P, who: `${sh.name} the ${sh.class}`, text: (kind === 'say' ? 'Says: “' + v + '”' : 'Does: ' + v).slice(0, 300), kind, turn_id: t ? t.turn_id : null });
+}
 
 function render() {
   if (!doc) return;
@@ -177,11 +195,12 @@ function render() {
   html += `<div id="party">${Object.entries(doc.players).filter(([, x]) => x.sheet).map(([k, x]) => `<span class="pm${+k === P ? ' me' : ''}">${esc(x.sheet.name)}${x.sheet.dead ? ' <span class="ghost">👻 ghost</span>' : ''}${+k === hold && Object.keys(doc.players).length > 1 ? ' <span class="turnmark">🎯 turn</span>' : ''}</span>`).join('')}</div>`;
   html += `<nav>${[['turn', 'Turn'], ['sheet', 'Sheets'], inTown && ['store', 'Store'], ['log', 'Requests']].filter(Boolean).map(([k, l]) => `<button data-tab="${k}" class="${tab === k ? 'on' : ''}">${l}</button>`).join('')}</nav>`;
   html += ({ turn: renderTurn, sheet: renderSheets, store: renderStore, log: renderLog })[tab]() + renderChat();
-  const keep = $('#chatin') ? $('#chatin').value : '', keepR = $('#reqin') ? $('#reqin').value : '';
-  $('#app').innerHTML = html; if ($('#chatin')) $('#chatin').value = keep; if ($('#reqin')) $('#reqin').value = keepR;
+  const keep = $('#chatin') ? $('#chatin').value : '', keepR = $('#reqin') ? $('#reqin').value : '', keepA = $('#actin') ? $('#actin').value : '', keepK = $('#actkind') ? $('#actkind').value : 'action';
+  $('#app').innerHTML = html; if ($('#chatin')) $('#chatin').value = keep; if ($('#reqin')) $('#reqin').value = keepR; if ($('#actin')) { $('#actin').value = keepA; $('#actkind').value = keepK; }
   document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; lastResult = ''; render(); });
   ({ turn: bindTurn, sheet: bindSheets, store: bindStore, log: bindLog })[tab]();
   $('#chatform').onsubmit = async e => { e.preventDefault(); const v = $('#chatin').value.trim(); if (!v) return; $('#chatin').value = ''; await store.chatSend(P, v.slice(0, 300), Engine.isGhost(doc, P)); };
+  $('#actform').onsubmit = async e => { e.preventDefault(); const v = $('#actin').value.trim(); if (!v) return; $('#actin').value = ''; await sendAct($('#actkind').value, v.slice(0, 280)); };
   const cl = $('#chatlog'); cl.scrollTop = cl.scrollHeight;
 }
 
