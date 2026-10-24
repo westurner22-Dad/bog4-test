@@ -26,7 +26,7 @@
     let id = builder.start ?? builder.scenarios[0].id; while (byId[id] && out.length < 50) { out.push(byId[id]); id = byId[id].next; } return { list: out, end: id }; }
   function tally(builder, picks) {
     const all = builder.scenarios.flatMap(s => s.options), opts = picks.map(id => all.find(o => o.id === id));
-    const counts = {}; opts.forEach(o => { counts[o.class] = (counts[o.class] || 0) + 1; });
+    const counts = {}; opts.forEach(o => (o.classes || [o.class]).forEach(c => { counts[c] = (counts[c] || 0) + 1; }));
     const top = Math.max(...Object.values(counts)); const tied = Object.keys(counts).filter(c => counts[c] === top).sort();
     return { opts, counts, tied };
   }
@@ -93,9 +93,14 @@
   }
   const toCp = c => Math.round((c.gp || 0) * 100 + (c.sp || 0) * 10 + (c.cp || 0));
   const fromCp = n => ({ gp: Math.floor(n / 100), sp: Math.floor(n % 100 / 10), cp: n % 10 });
+  // Store dropdown (Wes): every item lands in exactly one of apparel | weapons | adventure_gear | misc.
+  const SHOP_CAT_BY_TYPE = { armor: 'apparel', shield: 'apparel', clothing: 'apparel', weapon: 'weapons', gear: 'adventure_gear', kit: 'adventure_gear', food: 'adventure_gear' };
+  const SHOP_CATS = ['apparel', 'weapons', 'adventure_gear', 'misc'];
+  const shopCategory = it => SHOP_CATS.includes(it && it.shop_category) ? it.shop_category : (SHOP_CAT_BY_TYPE[it && it.type] || 'misc');
   const buyable = it => it && it.available !== false && it.price_gp != null && it.stock !== 0;
   function buy(doc0, p, item, qty = 1) {
     if (!buyable(item)) throw new Error('sold out');
+    if (!canShop(doc0.players[p])) throw new Error('the store is in town');
     const doc = clone(doc0), sh = doc.players[p].sheet, cost = Math.round(item.price_gp * 100) * qty, have = toCp(sh.coin);
     if (cost > have) throw new Error('not enough coin');
     sh.coin = fromCp(have - cost); addItem(sh, item, qty); return doc;
@@ -129,11 +134,17 @@
     });
     return e;
   }
-  function mergeBatches(batches) {
+  // seats: a static template batch (game_id '*', seat-1 turns only, e.g. design/batch1.json) is copied for every other seat
+  // as b<N>-p<seat>-t<K>, so a second player has turns before the nightly GM writes seat-specific ones.
+  const reseat = (t, s) => { const r = x => typeof x === 'string' ? x.replace(/-p1-/, `-p${s}-`) : x, c = clone(t); c.p = s; c.turn_id = r(c.turn_id);
+    (c.options || []).forEach(o => ['success', 'fail'].forEach(k => { if (o[k] && o[k].goto) o[k].goto = r(o[k].goto); })); return c; };
+  function mergeBatches(batches, seats = []) {
     const problems = [], seen = new Set(), queues = {};
     [...batches].sort((a, b) => (a.night || 0) - (b.night || 0)).forEach(b => {
       const bad = validateBatch(b); if (bad.length && bad[0].startsWith('batch:')) { problems.push(...bad); return; }
-      (b.turns || []).forEach(t => {
+      const tpl = b.game_id === '*' && (b.turns || []).every(t => +t.p === 1);
+      const turns = tpl ? [...b.turns, ...seats.map(Number).filter(s => s > 1).flatMap(s => b.turns.map(t => reseat(t, s)))] : (b.turns || []);
+      turns.forEach(t => {
         if (validateBatch({ batch_id: b.batch_id, turns: [t] }).length) { problems.push('skipped ' + t.turn_id); return; }
         if (seen.has(t.turn_id)) { problems.push('duplicate ' + t.turn_id + ' ignored'); return; }
         seen.add(t.turn_id); (queues[t.p] = queues[t.p] || []).push({ ...t, night: b.night });
@@ -194,6 +205,7 @@
   function playTurn(doc0, queues, p, i, rng = Math.random, derpCfg = null) {
     const doc = clone(doc0), pl = doc.players[p], t = currentTurn(doc, queues, p);
     if (!t) throw new Error('no turn');
+    if (stageOf(pl) !== 'tavern') throw new Error('visit the store first');
     if (isGhost(doc, p)) throw new Error('ghost: wait until the party enters town');   // Studio Lead round 3
     let prefix = '';
     if (pl.sheet.derp) { i = Math.floor(rng() * t.options.length); const px = (derpCfg && derpCfg.derp_prefixes) || []; if (px.length) prefix = px[Math.floor(rng() * px.length)] + ' '; }
@@ -208,6 +220,51 @@
     const q = queues[p], idx = q.findIndex(x => x.turn_id === t.turn_id);
     pl.cursor = br.goto || (q[idx + 1] || {}).turn_id || null;
     return doc;
+  }
+  // ---- stages (Wes round 7): build -> store -> tavern. Build and store are async per player; the store must be visited first.
+  const stageOf = pl => !pl || !pl.sheet ? 'build' : (pl.stage || 'tavern')   // no stage = pre-round-7 doc; normalize() migrates those;
+  function leaveStore(doc0, p, now = Date.now()) {
+    const doc = clone(doc0), pl = doc.players[p];
+    if (stageOf(pl) !== 'store') throw new Error('not in the store');
+    pl.stage = 'tavern'; pl.location = 'tavern'; pl.ready_at = now; return doc;
+  }
+  // Shopping is allowed whenever the player is in town (town/store/tavern), regardless of whose turn it is.
+  const canShop = pl => !!(pl && pl.sheet) && TOWN.includes(pl.location || 'town');
+  // ---- party turns (Wes round 7) ----
+  // Before the tavern everything is async. In the tavern and after, ready players (stage tavern) take turns in seat order.
+  // Play starts when every seat that has been opened is ready, or when a waiting player starts without the others
+  // (allowed at once if nobody else has opened the game, after waitFallbackMs if someone has). Late joiners slot into the
+  // rotation once they leave the store. A holder who can't act (ghost, no turn loaded) is skipped automatically; a holder
+  // idle for turnTimeoutMs can be skipped by anyone who can act. Nothing here can softlock: see test/unit + party_sim.
+  const PARTY = { waitFallbackMs: 12 * 3600e3, turnTimeoutMs: 24 * 3600e3 };
+  const seatsOf = doc => Object.keys(doc.players || {}).map(Number).sort((a, b) => a - b);
+  function turnInfo(doc, queues, p, now = Date.now()) {
+    const pl = doc.players[p], st = stageOf(pl), party = doc.party || {};
+    if (st !== 'tavern') return { state: st };
+    const seats = seatsOf(doc), ready = seats.filter(q => stageOf(doc.players[q]) === 'tavern');
+    const canAct = q => !isGhost(doc, q) && !!currentTurn(doc, queues, q);
+    if (!party.started_at) {
+      const pending = seats.filter(q => !ready.includes(q));
+      if (pending.length) return { state: 'waiting', waitingFor: pending, canStartSolo: now - (pl.ready_at || 0) >= PARTY.waitFallbackMs };
+      if (ready.length === 1) return { state: 'lobby', canStartSolo: true };
+    }
+    if (!canAct(p)) return { state: 'free', holder: p };   // ghost / GM asleep screens; never blocks anyone
+    const ord = ready, start = ord.includes(party.turn) ? ord.indexOf(party.turn) : 0;
+    let holder = null; for (let k = 0; k < ord.length; k++) { const q = ord[(start + k) % ord.length]; if (canAct(q)) { holder = q; break; } }
+    if (holder === p) return { state: 'yours', holder };
+    return { state: 'theirs', holder, canSkip: now - (party.last_move_at || party.started_at || Math.max(0, ...ready.map(q => doc.players[q].ready_at || 0))) >= PARTY.turnTimeoutMs };
+  }
+  function startWithout(doc0, queues, p, now = Date.now()) {
+    const doc = clone(doc0), i = turnInfo(doc, queues, p, now);
+    if (!((i.state === 'lobby' || i.state === 'waiting') && i.canStartSolo)) throw new Error('cannot start yet');
+    doc.party = Object.assign({}, doc.party, { started_at: now, turn: p, last_move_at: now, started_by: p }); return doc;
+  }
+  function takeTurn(doc0, queues, p, i, rng = Math.random, derpCfg = null, now = Date.now()) {
+    const info = turnInfo(doc0, queues, p, now);
+    if (!(info.state === 'yours' || (info.state === 'theirs' && info.canSkip))) throw new Error(info.state === 'theirs' ? 'not your turn' : 'waiting for the party');
+    const doc = playTurn(doc0, queues, p, i, rng, derpCfg), ord = seatsOf(doc).filter(q => stageOf(doc.players[q]) === 'tavern');
+    doc.party = Object.assign({}, doc.party, { started_at: (doc.party && doc.party.started_at) || now, last_move_at: now,
+      turn: ord[(ord.indexOf(p) + 1) % ord.length], last_p: p }); return doc;
   }
   const label = (sh, o, derpCfg) => sh && sh.derp ? ((derpCfg && derpCfg.label) || 'derp') : o.label;
 
@@ -226,14 +283,15 @@
   function freeSoloGhosts(games, rulings, night, now = Date.now()) {
     const out = {};
     for (const [gid, doc] of Object.entries(games || {})) {
+      // Round 7: also any party where EVERY seated player is a ghost outside town (nobody left to walk them back).
       const seated = Object.entries((doc && doc.players) || {}).filter(([, x]) => x && x.sheet);
-      if (seated.length !== 1) continue;
-      const [p, pl] = seated[0];
-      if (!(pl.sheet.dead || pl.sheet.hp.current <= 0) || TOWN.includes(pl.location)) continue;
-      const id = freeGhostId(night, p);
-      if (((rulings || {})[gid] || {})[id] || (doc.applied_rulings || {})[id]) continue;   // idempotent per night + player
-      out[gid] = { [id]: { gm: true, p: +p, who: 'GM', text: 'Nightly ghost pickup', ruling: 'granted', size: 'small', dc: null, roll: null,
-        reason: 'Solo ghost: the GM brings you back to the tavern.', effects: [{ type: 'location', value: 'tavern' }], ruled_at: now } };
+      const ghostOut = ([, pl]) => (pl.sheet.dead || pl.sheet.hp.current <= 0) && !TOWN.includes(pl.location);
+      if (!seated.length || !seated.every(ghostOut)) continue;
+      for (const [p] of seated) {
+        const id = freeGhostId(night, p);
+        if (((rulings || {})[gid] || {})[id] || (doc.applied_rulings || {})[id]) continue;   // idempotent per night + player
+        (out[gid] = out[gid] || {})[id] = { gm: true, p: +p, who: 'GM', text: 'Nightly ghost pickup', ruling: 'granted', size: 'small', dc: null, roll: null,
+          reason: seated.length === 1 ? 'Solo ghost: the GM brings you back to the tavern.' : 'The whole party fell: the GM brings everyone back to the tavern.', effects: [{ type: 'location', value: 'tavern' }], ruled_at: now }; }
     }
     return out;
   }
@@ -268,7 +326,7 @@
     d.players = toObj(d.players); d.world = d.world || {}; d.world.flags = d.world.flags || {};
     d.applied_rulings = d.applied_rulings || {}; d.request_rolls = d.request_rolls || {};
     for (const pl of Object.values(d.players)) {
-      pl.flags = pl.flags || {}; pl.history = arr(pl.history); if (pl.cursor === undefined) pl.cursor = null; pl.location = pl.location || 'town';
+      pl.flags = pl.flags || {}; pl.history = arr(pl.history); if (pl.cursor === undefined) pl.cursor = null; pl.location = pl.location || 'town'; if (pl.sheet && !pl.stage) pl.stage = (pl.history || []).length ? 'tavern' : 'store';
       const s = pl.sheet; if (!s) { pl.sheet = null; continue; }
       for (const k of ['equipment', 'attacks', 'features', 'skills']) s[k] = arr(s[k]);
       s.saves = s.saves || {}; s.coin = Object.assign({ gp: 0, sp: 0, cp: 0 }, s.coin); s.hp = Object.assign({ max: 1, current: 0, temp: 0 }, s.hp);
@@ -282,7 +340,7 @@
     }
     return d;
   }
-  const api = { normalize, CLASSES, winBonus, freePoints, allocCheck, baseFor, CAP, builderDc, builderRoll, scenarioOrder, tally, buildSheet, derived, modFor, buyable, buy, levelUp, validateBatch, mergeBatches,
+  const api = { PARTY, turnInfo, startWithout, takeTurn, stageOf, leaveStore, canShop, normalize, CLASSES, winBonus, freePoints, allocCheck, baseFor, CAP, builderDc, builderRoll, scenarioOrder, tally, buildSheet, derived, modFor, buyable, buy, shopCategory, SHOP_CATS, levelUp, validateBatch, mergeBatches,
     cfg, RESPAWN_FALLBACK, currentTurn, isGhost, playTurn, applyEffects, respawnAll, label, newGame, requestLog, applyRulings, rollRequest, freeSoloGhosts, freeGhostId, toCp };
   if (typeof module !== 'undefined') module.exports = api; else root.Engine = api;
 })(this);

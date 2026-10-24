@@ -10,7 +10,7 @@
 
   function build(race, picks, wins, bgSkills, tieChoice = null, opts = {}) {
     if (wins === 0) return { class: 'derp', scores: Object.fromEntries(STATS.map(s => [s, 1])), hp: 1, ac: 5, note: "Derp is permanent; every option is 'derp'." };
-    const cnt = {}; picks.forEach(p => { cnt[p.class] = (cnt[p.class] || 0) + 1; });
+    const cnt = {}; picks.forEach(p => (p.classes || [p.class]).forEach(c => { cnt[c] = (cnt[c] || 0) + 1; }));   // Wes round 7: an option may count for two classes
     const top = Math.max(...Object.values(cnt)), tied = Object.keys(cnt).filter(c => cnt[c] === top).sort();
     const cls = tied.length === 1 ? tied[0] : (tied.includes(tieChoice) ? tieChoice : tied[0]);
     const [prio, hd, saves, nsk, clsk] = C[cls];
