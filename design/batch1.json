@@ -1,0 +1,1028 @@
+{
+ "batch_id": "b1",
+ "night": 1,
+ "game_id": "*",
+ "written_at": "2026-10-23T16:20:00-07:00",
+ "based_on": {
+  "batch": null,
+  "v": 0,
+  "players": {
+   "1": {
+    "last_turn_id": null,
+    "flags_seen": {}
+   }
+  }
+ },
+ "title": "Balls or Gapes IV: Test Campaign, Batch 1 (turns 1-10 of 20, solo seat 1)",
+ "turns": [
+  {
+   "turn_id": "b1-p1-t1",
+   "p": 1,
+   "seq": 1,
+   "title": "Welcome to Staff Orientation",
+   "text": "Congratulations on your new job, which you did not apply for. Mags Thimbleby glares at you over the bar. Behind her, the Gullet door wheezes. A goblin bar-back named Splurt waves a mop at you like it's a sword. It is not a sword. Nothing here is what it should be.",
+   "requires": null,
+   "options": [
+    {
+     "label": "Ask Mags what exactly the mimic ate.",
+     "roll": {
+      "skill": "persuasion",
+      "dc": 10
+     },
+     "success": {
+      "text": "Mags lists: the beer, the cellar, and Harold, her late husband, in a very nice urn. 'Bring Harold back. Beer optional.'",
+      "effects": [
+       {
+        "type": "location",
+        "value": "tavern"
+       },
+       {
+        "type": "flag",
+        "key": "knows_urn",
+        "value": true,
+        "scope": "world"
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "Mags just says 'everything' and cries into a rag. Splurt fills you in, mostly wrongly.",
+      "effects": [
+       {
+        "type": "location",
+        "value": "tavern"
+       },
+       {
+        "type": "flag",
+        "key": "knows_urn",
+        "value": true,
+        "scope": "world"
+       }
+      ],
+      "goto": null
+     }
+    },
+    {
+     "label": "Inspect the Gullet door.",
+     "roll": {
+      "skill": "investigation",
+      "dc": 12
+     },
+     "success": {
+      "text": "The door has teeth. Polite teeth, but teeth. You notice it flinches at hot things.",
+      "effects": [
+       {
+        "type": "location",
+        "value": "tavern"
+       },
+       {
+        "type": "flag",
+        "key": "mimic_hates_heat",
+        "value": true,
+        "scope": "world"
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "You poke it. It pokes back. With a tongue. You are now coated in tavern slobber, and everyone can smell it.",
+      "effects": [
+       {
+        "type": "location",
+        "value": "tavern"
+       },
+       {
+        "type": "flag",
+        "key": "slimed",
+        "value": true
+       }
+      ],
+      "goto": null
+     }
+    },
+    {
+     "label": "Interview Splurt.",
+     "roll": null,
+     "success": {
+      "text": "Splurt says he's 'Head of Security.' He's also Head of Mops and Head of Crying. He'll follow you down. You did not ask for this.",
+      "effects": [
+       {
+        "type": "location",
+        "value": "tavern"
+       },
+       {
+        "type": "flag",
+        "key": "splurt_follows",
+        "value": true
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "Splurt says he's 'Head of Security.' He's also Head of Mops and Head of Crying. He'll follow you down. You did not ask for this.",
+      "effects": [
+       {
+        "type": "location",
+        "value": "tavern"
+       },
+       {
+        "type": "flag",
+        "key": "splurt_follows",
+        "value": true
+       }
+      ],
+      "goto": null
+     }
+    }
+   ]
+  },
+  {
+   "turn_id": "b1-p1-t2",
+   "p": 1,
+   "seq": 2,
+   "title": "The Store Behind the Bar",
+   "text": "Mags opens a cabinet marked SUPPLIES. Inside: a shopping list of sad and expensive things. Shoes are sold out. Of course they are.",
+   "requires": null,
+   "options": [
+    {
+     "label": "Shop (opens the store).",
+     "roll": null,
+     "success": {
+      "text": "You buy things. Mags rings you up with the energy of someone whose bar is digesting her husband.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "open_store",
+        "value": true
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "You buy things. Mags rings you up with the energy of someone whose bar is digesting her husband.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "open_store",
+        "value": true
+       }
+      ],
+      "goto": null
+     }
+    },
+    {
+     "label": "Haggle with Mags.",
+     "roll": {
+      "skill": "persuasion",
+      "dc": 13
+     },
+     "success": {
+      "text": "She knocks off a gold piece 'because you have honest feet.'",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "open_store",
+        "value": true
+       },
+       {
+        "type": "location",
+        "value": "store"
+       },
+       {
+        "type": "coin",
+        "gp": 1
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "She raises prices. 'Grief tax.'",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "open_store",
+        "value": true
+       },
+       {
+        "type": "location",
+        "value": "store"
+       }
+      ],
+      "goto": null
+     }
+    },
+    {
+     "label": "Pocket a free torch while she isn't looking.",
+     "roll": {
+      "skill": "sleight_of_hand",
+      "dc": 12
+     },
+     "success": {
+      "text": "Free torch. Splurt saw. Splurt respects you now.",
+      "effects": [
+       {
+        "type": "item_add",
+        "item": {
+         "id": "torch",
+         "name": "Torch",
+         "price_gp": 0.01,
+         "type": "gear",
+         "notes": "Free. Allegedly.",
+         "qty": 1
+        }
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "Mags saw. Mags adds it to your tab, with interest.",
+      "effects": [],
+      "goto": null
+     }
+    }
+   ]
+  },
+  {
+   "turn_id": "b1-p1-t3",
+   "p": 1,
+   "seq": 3,
+   "title": "Casing the Joint",
+   "text": "Heist rule one: case the place. The tavern regulars, all four of them, are still here because the mimic also ate the exit. Each has seen something.",
+   "requires": null,
+   "options": [
+    {
+     "label": "Buy the old drunk a drink for gossip.",
+     "roll": {
+      "skill": "insight",
+      "dc": 11
+     },
+     "success": {
+      "text": "He says the mimic swallows everything into three stomachs, and the urn will be in the last one, where the shiny stuff goes.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "map_known",
+        "value": true,
+        "scope": "world"
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "He tells you about his divorce. In detail. You learn nothing about mimics.",
+      "effects": [],
+      "goto": null
+     }
+    },
+    {
+     "label": "Draw a map from the mimic's burps.",
+     "roll": {
+      "skill": "perception",
+      "dc": 13
+     },
+     "success": {
+      "text": "Each burp echoes from a different chamber. You have a map. It smells.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "map_known",
+        "value": true,
+        "scope": "world"
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "You have a drawing. It might be a duck.",
+      "effects": [],
+      "goto": null
+     }
+    },
+    {
+     "label": "Skip the planning. Plans are for cowards.",
+     "roll": null,
+     "success": {
+      "text": "Bold. Stupid. Very you. Splurt applauds.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "no_plan",
+        "value": true
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "Bold. Stupid. Very you. Splurt applauds.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "no_plan",
+        "value": true
+       }
+      ],
+      "goto": null
+     }
+    }
+   ]
+  },
+  {
+   "turn_id": "b1-p1-t4",
+   "p": 1,
+   "seq": 4,
+   "title": "The Plan",
+   "text": "Heist rule two: make a plan. Splurt is already wearing a fake mustache. He has no part in the plan.",
+   "requires": null,
+   "options": [
+    {
+     "label": "Plan A: go in hot (torch first).",
+     "roll": null,
+     "success": {
+      "text": "The mimic hates heat, probably. You go with fire.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "plan_fire",
+        "value": true
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "The mimic hates heat, probably. You go with fire.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "plan_fire",
+        "value": true
+       }
+      ],
+      "goto": null
+     }
+    },
+    {
+     "label": "Plan B: go in quiet.",
+     "roll": null,
+     "success": {
+      "text": "Sneak in, grab the urn, sneak out. What could go wrong. (Everything.)",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "plan_quiet",
+        "value": true
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "Sneak in, grab the urn, sneak out. What could go wrong. (Everything.)",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "plan_quiet",
+        "value": true
+       }
+      ],
+      "goto": null
+     }
+    },
+    {
+     "label": "Plan C: go in polite, with a bucket of beer as a peace offering.",
+     "roll": null,
+     "success": {
+      "text": "Mimics are just furniture with feelings. You'll negotiate.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "plan_talk",
+        "value": true
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "Mimics are just furniture with feelings. You'll negotiate.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "plan_talk",
+        "value": true
+       }
+      ],
+      "goto": null
+     }
+    }
+   ]
+  },
+  {
+   "turn_id": "b1-p1-t5",
+   "p": 1,
+   "seq": 5,
+   "title": "Stomach One: The Lobby",
+   "text": "You climb down the throat. It's warm and moist, like a sauna run by a dog. A pair of Gut Rats (acid-proof, union members) block the way. They're chewing a barstool.",
+   "requires": null,
+   "options": [
+    {
+     "label": "Fight the rats.",
+     "roll": {
+      "skill": "attack",
+      "dc": 12
+     },
+     "success": {
+      "text": "You kick one, the other runs. Small victory. The barstool is yours now.",
+      "effects": [
+       {
+        "type": "location",
+        "value": "dungeon"
+       },
+       {
+        "type": "flag",
+        "key": "rats_beaten",
+        "value": true
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "A rat bites your ankle. Your bare ankle.",
+      "effects": [
+       {
+        "type": "location",
+        "value": "dungeon"
+       },
+       {
+        "type": "hp",
+        "target": "self",
+        "delta": -2
+       }
+      ],
+      "goto": null
+     }
+    },
+    {
+     "label": "Toss them your snacks.",
+     "roll": null,
+     "success": {
+      "text": "Rats are reasonable. They eat. They let you pass. One gives you a salute.",
+      "effects": [
+       {
+        "type": "location",
+        "value": "dungeon"
+       },
+       {
+        "type": "location",
+        "value": "dungeon"
+       },
+       {
+        "type": "flag",
+        "key": "rats_friends",
+        "value": true
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "Rats are reasonable. They eat. They let you pass. One gives you a salute.",
+      "effects": [
+       {
+        "type": "location",
+        "value": "dungeon"
+       },
+       {
+        "type": "location",
+        "value": "dungeon"
+       },
+       {
+        "type": "flag",
+        "key": "rats_friends",
+        "value": true
+       }
+      ],
+      "goto": null
+     }
+    },
+    {
+     "label": "Pretend to be a health inspector.",
+     "roll": {
+      "skill": "deception",
+      "dc": 12
+     },
+     "success": {
+      "text": "The rats panic and scatter to file paperwork.",
+      "effects": [
+       {
+        "type": "location",
+        "value": "dungeon"
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "They demand ID. You show them a mop. They are unimpressed.",
+      "effects": [
+       {
+        "type": "location",
+        "value": "dungeon"
+       },
+       {
+        "type": "hp",
+        "target": "self",
+        "delta": -1
+       }
+      ],
+      "goto": null
+     }
+    }
+   ]
+  },
+  {
+   "turn_id": "b1-p1-t6",
+   "p": 1,
+   "seq": 6,
+   "title": "Stomach One: Lost and Found",
+   "text": "A pile of things the mimic swallowed and didn't like: boots (one, left, size baby), a love letter, a very angry cat in a jar.",
+   "requires": null,
+   "options": [
+    {
+     "label": "Free the cat.",
+     "roll": {
+      "skill": "animal_handling",
+      "dc": 11
+     },
+     "success": {
+      "text": "The cat is grateful in its own way, which is ignoring you. It follows anyway.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "cat_ally",
+        "value": true
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "The cat scratches your face and leaves. Fair.",
+      "effects": [
+       {
+        "type": "hp",
+        "target": "self",
+        "delta": -1
+       }
+      ],
+      "goto": null
+     }
+    },
+    {
+     "label": "Read the love letter aloud.",
+     "roll": null,
+     "success": {
+      "text": "It's to Mags. From Harold. You all go quiet. Splurt sobs. You resolve to bring him home.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "harold_letter",
+        "value": true
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "It's to Mags. From Harold. You all go quiet. Splurt sobs. You resolve to bring him home.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "harold_letter",
+        "value": true
+       }
+      ],
+      "goto": null
+     }
+    },
+    {
+     "label": "Try on the baby boot.",
+     "roll": {
+      "skill": "acrobatics",
+      "dc": 14
+     },
+     "success": {
+      "text": "It fits your big toe. Technically you now own shoes.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "one_toe_shoe",
+        "value": true
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "You fall over. The mimic laughs. The whole room shakes.",
+      "effects": [
+       {
+        "type": "hp",
+        "target": "self",
+        "delta": -1
+       }
+      ],
+      "goto": null
+     }
+    }
+   ]
+  },
+  {
+   "turn_id": "b1-p1-t7",
+   "p": 1,
+   "seq": 7,
+   "title": "The Sphincter Door",
+   "text": "Between stomachs is a door. It's a sphincter. We're not going to talk about it. It's clenched.",
+   "requires": null,
+   "options": [
+    {
+     "label": "Use fire.",
+     "roll": {
+      "skill": "arcana",
+      "dc": 10
+     },
+     "success": {
+      "text": "Hot! The door spasms open. You go through with dignity. Some dignity.",
+      "effects": [],
+      "goto": null
+     },
+     "fail": {
+      "text": "You singe your own eyebrows. The door laughs and opens anyway.",
+      "effects": [
+       {
+        "type": "hp",
+        "target": "self",
+        "delta": -1
+       }
+      ],
+      "goto": null
+     }
+    },
+    {
+     "label": "Tickle it.",
+     "roll": {
+      "skill": "sleight_of_hand",
+      "dc": 12
+     },
+     "success": {
+      "text": "It giggles open. Never speak of this.",
+      "effects": [],
+      "goto": null
+     },
+     "fail": {
+      "text": "It clenches harder. Splurt has to tickle it. He's good at it.",
+      "effects": [],
+      "goto": null
+     }
+    },
+    {
+     "label": "Knock politely and say please.",
+     "roll": null,
+     "success": {
+      "text": "It opens. Manners matter, even inside a monster.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "polite_points",
+        "value": 1
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "It opens. Manners matter, even inside a monster.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "polite_points",
+        "value": 1
+       }
+      ],
+      "goto": null
+     }
+    }
+   ]
+  },
+  {
+   "turn_id": "b1-p1-t8",
+   "p": 1,
+   "seq": 8,
+   "title": "Stomach Two: The Bar Inside the Bar",
+   "text": "Things go wrong, as heists do. Stomach Two is a perfect copy of the tavern above, built of meat. The fake bartender is a Mimic Mini. It asks what you're having.",
+   "requires": null,
+   "options": [
+    {
+     "label": "Order a drink to play along.",
+     "roll": {
+      "skill": "insight",
+      "dc": 13
+     },
+     "success": {
+      "text": "You spot that the bottles are teeth. You order 'nothing, thanks' and walk on by.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "mini_fooled",
+        "value": true
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "You drink it. It's stomach acid with a lime. Ouch.",
+      "effects": [
+       {
+        "type": "hp",
+        "target": "self",
+        "delta": -3
+       }
+      ],
+      "goto": null
+     }
+    },
+    {
+     "label": "Attack the bartender.",
+     "roll": {
+      "skill": "attack",
+      "dc": 13
+     },
+     "success": {
+      "text": "You flip the counter and it squeals off to sulk. Heist back on track.",
+      "effects": [],
+      "goto": null
+     },
+     "fail": {
+      "text": "It bites. Big bite. You win, eventually, minus some skin.",
+      "effects": [
+       {
+        "type": "hp",
+        "target": "self",
+        "delta": -3
+       }
+      ],
+      "goto": null
+     }
+    },
+    {
+     "label": "Tip it generously.",
+     "roll": null,
+     "success": {
+      "text": "Even mimics love a tip. It points the way to Stomach Three and winks with a drawer.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "mini_friend",
+        "value": true
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "Even mimics love a tip. It points the way to Stomach Three and winks with a drawer.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "mini_friend",
+        "value": true
+       }
+      ],
+      "goto": null
+     }
+    }
+   ]
+  },
+  {
+   "turn_id": "b1-p1-t9",
+   "p": 1,
+   "seq": 9,
+   "title": "Splurt's Big Moment",
+   "text": "Splurt trips on the rug, which is a tongue, and is lifted up toward the ceiling, which is a mouth. He screams 'I DON'T WANT TO BE AN EXTRA!'",
+   "requires": null,
+   "options": [
+    {
+     "label": "Grab his ankle.",
+     "roll": {
+      "skill": "athletics",
+      "dc": 12
+     },
+     "success": {
+      "text": "Got him. He hugs you, uncomfortably long.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "splurt_saved",
+        "value": true
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "You both go up. You both come down. Badly.",
+      "effects": [
+       {
+        "type": "hp",
+        "target": "self",
+        "delta": -2
+       }
+      ],
+      "goto": null
+     }
+    },
+    {
+     "label": "Cut the tongue.",
+     "roll": {
+      "skill": "acrobatics",
+      "dc": 13
+     },
+     "success": {
+      "text": "Snip. Splurt drops into your arms. The mimic groans. The tavern above shakes.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "splurt_saved",
+        "value": true
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "You cut your own hair. Splurt still falls, onto you.",
+      "effects": [
+       {
+        "type": "hp",
+        "target": "self",
+        "delta": -1
+       }
+      ],
+      "goto": null
+     }
+    },
+    {
+     "label": "Let him go. He'll respawn. Probably.",
+     "roll": null,
+     "success": {
+      "text": "Splurt disappears with a sad 'bloop'. Twenty minutes later he walks back in from upstairs, confused. Death is weird here.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "splurt_respawned",
+        "value": true
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "Splurt disappears with a sad 'bloop'. Twenty minutes later he walks back in from upstairs, confused. Death is weird here.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "splurt_respawned",
+        "value": true
+       }
+      ],
+      "goto": null
+     }
+    }
+   ]
+  },
+  {
+   "turn_id": "b1-p1-t10",
+   "p": 1,
+   "seq": 10,
+   "title": "The Glint Ahead",
+   "text": "Through the last throat you see it: Stomach Three, piled with every shiny thing the mimic ever ate, and on top, glowing gently, Harold's urn. Something big shifts beneath the pile. To be continued.",
+   "requires": null,
+   "options": [
+    {
+     "label": "Charge for the urn.",
+     "roll": null,
+     "success": {
+      "text": "Fine. Bold. We'll see tomorrow.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "approach",
+        "value": "charge"
+       },
+       {
+        "type": "xp",
+        "amount": 50
+       },
+       {
+        "type": "xp",
+        "amount": 50
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "Fine. Bold. We'll see tomorrow.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "approach",
+        "value": "charge"
+       },
+       {
+        "type": "xp",
+        "amount": 50
+       },
+       {
+        "type": "xp",
+        "amount": 50
+       }
+      ],
+      "goto": null
+     }
+    },
+    {
+     "label": "Sneak along the wall.",
+     "roll": null,
+     "success": {
+      "text": "Quiet feet. Your bare feet are finally useful.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "approach",
+        "value": "sneak"
+       },
+       {
+        "type": "xp",
+        "amount": 50
+       },
+       {
+        "type": "xp",
+        "amount": 50
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "Quiet feet. Your bare feet are finally useful.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "approach",
+        "value": "sneak"
+       },
+       {
+        "type": "xp",
+        "amount": 50
+       },
+       {
+        "type": "xp",
+        "amount": 50
+       }
+      ],
+      "goto": null
+     }
+    },
+    {
+     "label": "Call out to whatever's under the pile.",
+     "roll": null,
+     "success": {
+      "text": "A deep voice says 'Who's there?' It has a lisp. Interesting.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "approach",
+        "value": "talk"
+       },
+       {
+        "type": "xp",
+        "amount": 50
+       },
+       {
+        "type": "xp",
+        "amount": 50
+       }
+      ],
+      "goto": null
+     },
+     "fail": {
+      "text": "A deep voice says 'Who's there?' It has a lisp. Interesting.",
+      "effects": [
+       {
+        "type": "flag",
+        "key": "approach",
+        "value": "talk"
+       },
+       {
+        "type": "xp",
+        "amount": 50
+       },
+       {
+        "type": "xp",
+        "amount": 50
+       }
+      ],
+      "goto": null
+     }
+    }
+   ]
+  }
+ ],
+ "rulings": {}
+}

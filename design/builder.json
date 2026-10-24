@@ -1,0 +1,2688 @@
+{
+ "title": "Balls or Gapes IV: Character Builder",
+ "threshold": 13,
+ "tavern_hook": {
+  "group": {
+   "text": "Mid-chorus, the floor burps. The Leaking Tankard is not a building: it is an ancient Tavern Mimic, and it has just swallowed the cellar, the beer, and the landlady's late husband's urn. Landlady Mags Thimbleby slams the door, bars it with a broom, and announces that everyone currently in her tavern is now jointly responsible for the bill, the beer, and the urn. The only way out is down: the mimic's stomach, locally known as the Gullet, opens behind the bar. A notice is already nailed up: 'ADVENTURERS WANTED. Must be present. You are present.' You look at the other shoeless idiots in the room. They look at you. To make it legal, she hands out name tags: you are now staff of 'Thimbleby Tankard Recovery, LLC,' each with a job title she makes up on the spot (Chief Beverage Officer, Head of Urn, Senior Floor Apologist...). Team-up achieved.",
+   "forced_team_up": true,
+   "next": "batch:b1-p1-t1"
+  },
+  "solo": {
+   "text": "Mid-chorus, the floor burps. The Leaking Tankard is an ancient Tavern Mimic, and it has just swallowed the cellar, the beer, and Harold (the landlady's late husband, in a very nice urn). Landlady Mags Thimbleby bars the door with a broom and looks around. The only other 'patrons' are Splurt, a goblin bar-back holding a mop like a sword, and two hirelings asleep under a table: Dunk (a half-ogre who carries things and cries) and Mirabel (a lantern-holder who charges by the hour). Mags declares the four of you jointly responsible for the bill, the beer and Harold. She hands out name tags for 'Thimbleby Tankard Recovery, LLC': you are Regional Manager of Getting Harold Back, Splurt is Head of Security (and Mops), Dunk is Senior Lifter, Mirabel is Director of Light. The Gullet door behind the bar wheezes open. You are the only one who wanted to go. Team-up achieved, unfortunately.",
+   "forced_team_up": true,
+   "npc_party": [
+    "splurt",
+    "dunk_hireling",
+    "mirabel_hireling"
+   ],
+   "next": "batch:b1-p1-t1"
+  },
+  "use": "solo when player count is 1"
+ },
+ "respawn_lines": [
+  "You died. Impressive, honestly. You're back.",
+  "You died in a tavern. Do you know how hard that is? Welcome back.",
+  "Death has returned you, unopened. Try again.",
+  "You respawn at the bar. Mags adds the funeral to your tab.",
+  "Splurt has drawn a chalk outline of you. It's flattering. You're back.",
+  "The afterlife sent you back with a note: 'not yet, and please stop.'",
+  "You wake up upstairs, alive and mildly offended. Carry on.",
+  "Somewhere, a bard is already writing the song about that. You're back.",
+  "Good news: you're alive. Bad news: everyone saw.",
+  "You died so hard the universe hit undo. Don't make it a habit."
+ ],
+ "derp": {
+  "label": "derp",
+  "resolve": "random option of the current scenario/turn, shown with a random derp_prefix before its outcome text",
+  "derp_prefixes": [
+   "Derp. Your body chooses for you:",
+   "You say 'derp' with total confidence. Somehow, this happens:",
+   "Your brain goes on lunch break. Your legs improvise:",
+   "You derp. The universe, embarrassed, picks something:",
+   "A single drool of determination, and then:",
+   "You point at nothing and shout 'DERP!' Fate shrugs:",
+   "You trip over the option menu and land on this one:",
+   "Derp intensifies. Against all odds:"
+  ]
+ },
+ "version": "test-1",
+ "start": 1,
+ "homeland": "Alabamantia",
+ "rules": {
+  "success_on_default": 13,
+  "success_on_configurable": true,
+  "note": "Raw d20, no bonuses. 13+ (40%) pending Wes's confirmation.",
+  "class_rule": "most-picked class; tie -> player chooses among tied",
+  "win_bonus": {
+   "10": 5,
+   "9": 4,
+   "8": 3,
+   "7": 2,
+   "6": 1,
+   "2-5": 0,
+   "1": -1,
+   "0": "DERP (all stats 1, class Derp, permanent)"
+  },
+  "stat_weights_status": "PROVISIONAL inputs; Teacher owns the derivation math",
+  "fail_forward": "Fail never blocks; both outcomes advance to next scenario"
+ },
+ "scenarios": [
+  {
+   "id": 1,
+   "key": "s1_toddler",
+   "title": "The Goose Incident",
+   "text": "You are three years old, barefoot, in a muddy yard in Alabamantia. A goose the size of a regret has cornered your grandmother.",
+   "options": [
+    {
+     "id": "s1_sorcerer",
+     "text": "Get very, very upset until something nearby catches fire.",
+     "class": "sorcerer",
+     "stat_weights": {
+      "cha": 2,
+      "con": 1
+     },
+     "skills": [
+      "intimidation"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "fire"
+     ],
+     "spell_hint": "fire bolt",
+     "opposition_dc": 13,
+     "success_text": "The goose leaves smoking. Nobody explains this to you.",
+     "fail_text": "The barn catches fire instead. The goose seems pleased."
+    },
+    {
+     "id": "s1_fighter",
+     "text": "Grab the broom and hold the line like a tiny soldier.",
+     "class": "fighter",
+     "stat_weights": {
+      "str": 1,
+      "con": 1
+     },
+     "skills": [
+      "athletics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "You hold the line. The goose respects you now.",
+     "fail_text": "The broom wins. The goose was never involved."
+    },
+    {
+     "id": "s1_warlock",
+     "text": "Whisper \"help\" and hear something whisper \"sure, kid.\"",
+     "class": "warlock",
+     "stat_weights": {
+      "cha": 1,
+      "int": 1
+     },
+     "skills": [
+      "deception",
+      "arcana"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "force"
+     ],
+     "spell_hint": "eldritch blast",
+     "opposition_dc": 13,
+     "success_text": "The goose is flung over the fence by nothing at all.",
+     "fail_text": "Something answers, but it just wants to chat. For years."
+    },
+    {
+     "id": "s1_monk",
+     "text": "Sit cross-legged and stare at the goose until one of you achieves enlightenment.",
+     "class": "monk",
+     "stat_weights": {
+      "dex": 1,
+      "wis": 1
+     },
+     "skills": [
+      "insight",
+      "acrobatics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "The goose blinks first.",
+     "fail_text": "You fall asleep. The goose eats your hat. You wake up peaceful anyway."
+    },
+    {
+     "id": "s1_cleric",
+     "text": "Tell the goose that Grandma's god sees everything it does.",
+     "class": "cleric",
+     "stat_weights": {
+      "wis": 1,
+      "cha": 1
+     },
+     "skills": [
+      "religion",
+      "persuasion"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "radiant"
+     ],
+     "spell_hint": "sacred flame",
+     "opposition_dc": 13,
+     "success_text": "The goose looks up nervously and departs.",
+     "fail_text": "The goose is apparently an atheist."
+    },
+    {
+     "id": "s1_paladin",
+     "text": "Stand in front of Grandma and declare, very loudly, that this ends now.",
+     "class": "paladin",
+     "stat_weights": {
+      "str": 2,
+      "cha": 1
+     },
+     "skills": [
+      "intimidation",
+      "religion"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "The goose, moved by your conviction, wanders off.",
+     "fail_text": "You are knocked flat but Grandma says you were very brave, which counts."
+    },
+    {
+     "id": "s1_artificer",
+     "text": "Build a decoy goose out of a bucket and a mop.",
+     "class": "artificer",
+     "stat_weights": {
+      "int": 2,
+      "dex": 1
+     },
+     "skills": [
+      "investigation",
+      "sleight_of_hand"
+     ],
+     "style": "ranged",
+     "spell_tags": [
+      "trick"
+     ],
+     "spell_hint": "mending",
+     "opposition_dc": 13,
+     "success_text": "The goose falls in love with the bucket. You've ruined it for all other geese.",
+     "fail_text": "The bucket falls apart. The mop joins the goose's side."
+    },
+    {
+     "id": "s1_wizard",
+     "text": "Calculate the goose's turning radius and climb the one spot it can't reach.",
+     "class": "wizard",
+     "stat_weights": {
+      "int": 2,
+      "dex": 1
+     },
+     "skills": [
+      "investigation",
+      "arcana"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "trick"
+     ],
+     "spell_hint": "mage hand",
+     "opposition_dc": 13,
+     "success_text": "Safe, smug, and up a tree.",
+     "fail_text": "Your math was off by one goose."
+    },
+    {
+     "id": "s1_bard",
+     "text": "Sing the goose a lullaby you just made up.",
+     "class": "bard",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "performance"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "psychic",
+      "charm"
+     ],
+     "spell_hint": "vicious mockery",
+     "opposition_dc": 13,
+     "success_text": "The goose sways and naps. Grandma tells everyone for forty years.",
+     "fail_text": "The goose hates your song. Critics will agree later."
+    },
+    {
+     "id": "s1_ranger",
+     "text": "Throw pinecones from the fence with suspicious accuracy.",
+     "class": "ranger",
+     "stat_weights": {
+      "dex": 2
+     },
+     "skills": [
+      "survival",
+      "animal_handling"
+     ],
+     "style": "ranged",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Bonk. Bonk. The goose files a complaint and leaves.",
+     "fail_text": "You hit Grandma. Twice. She still calls you her favorite."
+    },
+    {
+     "id": "s1_rogue",
+     "text": "Quietly steal the goose's eggs while it's busy.",
+     "class": "rogue",
+     "stat_weights": {
+      "dex": 2
+     },
+     "skills": [
+      "stealth",
+      "sleight_of_hand"
+     ],
+     "style": "sneaky",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Omelette secured. The goose never knew.",
+     "fail_text": "The goose knew. The goose always knows."
+    },
+    {
+     "id": "s1_barbarian",
+     "text": "Bite the goose. On the neck. Hard.",
+     "class": "barbarian",
+     "stat_weights": {
+      "str": 2,
+      "con": 1
+     },
+     "skills": [
+      "athletics",
+      "intimidation"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "The goose retreats, shaken. So does Grandma.",
+     "fail_text": "The goose bites back. You both lose. You grow a fine scar and a lifelong grudge."
+    },
+    {
+     "id": "s1_druid",
+     "text": "Honk back. Respectfully. In goose.",
+     "class": "druid",
+     "stat_weights": {
+      "wis": 2
+     },
+     "skills": [
+      "animal_handling",
+      "nature"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "nature",
+      "trick"
+     ],
+     "spell_hint": "druidcraft",
+     "opposition_dc": 13,
+     "success_text": "You negotiate a truce. The goose becomes your godparent.",
+     "fail_text": "You accidentally declare war on all geese. They remember."
+    }
+   ],
+   "order": 1,
+   "next": 2
+  },
+  {
+   "id": 2,
+   "key": "s2_school",
+   "title": "Alabamantia Barefoot Academy",
+   "text": "School day. The teacher asks the class to present \"something you're good at.\" You have prepared nothing.",
+   "options": [
+    {
+     "id": "s2_wizard",
+     "text": "Recite every fact you know about mushrooms. It's a lot.",
+     "class": "wizard",
+     "stat_weights": {
+      "int": 2
+     },
+     "skills": [
+      "nature",
+      "history"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "trick"
+     ],
+     "spell_hint": "prestidigitation",
+     "opposition_dc": 13,
+     "success_text": "Gold star. Weird looks. Worth it.",
+     "fail_text": "You eat a demonstration mushroom. Day off."
+    },
+    {
+     "id": "s2_cleric",
+     "text": "Lead the class in a calming prayer before the math test.",
+     "class": "cleric",
+     "stat_weights": {
+      "wis": 2
+     },
+     "skills": [
+      "religion",
+      "medicine"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "protect",
+      "detect"
+     ],
+     "spell_hint": "guidance",
+     "opposition_dc": 13,
+     "success_text": "Everyone passes. Suspicious, but beautiful.",
+     "fail_text": "Everyone fails, but serenely."
+    },
+    {
+     "id": "s2_ranger",
+     "text": "Track the missing class hamster to the coat closet.",
+     "class": "ranger",
+     "stat_weights": {
+      "wis": 1,
+      "dex": 1
+     },
+     "skills": [
+      "survival",
+      "perception"
+     ],
+     "style": "ranged",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Hamster found. Hero of the second grade.",
+     "fail_text": "You find a different hamster. Nobody asks."
+    },
+    {
+     "id": "s2_barbarian",
+     "text": "Lift the teacher's desk. With the teacher on it.",
+     "class": "barbarian",
+     "stat_weights": {
+      "str": 2,
+      "con": 1
+     },
+     "skills": [
+      "athletics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "A standing ovation, mostly from the teacher, who can't get down.",
+     "fail_text": "You drop it. Lifelong ban on desks."
+    },
+    {
+     "id": "s2_monk",
+     "text": "Stand on one foot for the entire period without speaking.",
+     "class": "monk",
+     "stat_weights": {
+      "dex": 2,
+      "wis": 1
+     },
+     "skills": [
+      "acrobatics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "It's eerie. You pass.",
+     "fail_text": "You fall on a classmate. You both learn about falling."
+    },
+    {
+     "id": "s2_sorcerer",
+     "text": "Sneeze sparkles. Again. You didn't plan this.",
+     "class": "sorcerer",
+     "stat_weights": {
+      "cha": 2,
+      "con": 1
+     },
+     "skills": [
+      "intimidation"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "light"
+     ],
+     "spell_hint": "light",
+     "opposition_dc": 13,
+     "success_text": "Glitter-based fame.",
+     "fail_text": "Glitter in everything, forever. Your teacher retires."
+    },
+    {
+     "id": "s2_druid",
+     "text": "Show the class your pet worm, Gerald, and his little routine.",
+     "class": "druid",
+     "stat_weights": {
+      "wis": 2
+     },
+     "skills": [
+      "animal_handling",
+      "nature"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "nature"
+     ],
+     "spell_hint": "shillelagh",
+     "opposition_dc": 13,
+     "success_text": "Gerald kills. The crowd loves Gerald.",
+     "fail_text": "Gerald escapes into the teacher's lunch."
+    },
+    {
+     "id": "s2_fighter",
+     "text": "Demonstrate proper stick-sword technique on a scarecrow.",
+     "class": "fighter",
+     "stat_weights": {
+      "str": 2
+     },
+     "skills": [
+      "athletics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "The scarecrow is defeated. The class is inspired.",
+     "fail_text": "The scarecrow survives. Its reputation grows."
+    },
+    {
+     "id": "s2_rogue",
+     "text": "Present the teacher's own lesson plan, which you found in her bag.",
+     "class": "rogue",
+     "stat_weights": {
+      "dex": 1,
+      "int": 1
+     },
+     "skills": [
+      "sleight_of_hand",
+      "deception"
+     ],
+     "style": "sneaky",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "She can't prove anything. A+.",
+     "fail_text": "She can prove everything. Detention until spring."
+    },
+    {
+     "id": "s2_warlock",
+     "text": "Read aloud from a book you found in a well.",
+     "class": "warlock",
+     "stat_weights": {
+      "cha": 1,
+      "int": 1
+     },
+     "skills": [
+      "arcana",
+      "deception"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "necrotic",
+      "psychic"
+     ],
+     "spell_hint": "hex",
+     "opposition_dc": 13,
+     "success_text": "The book is surprisingly good. The well thanks you.",
+     "fail_text": "The lights flicker. The class pet now speaks. Rudely."
+    },
+    {
+     "id": "s2_artificer",
+     "text": "Present a self-buttering toast machine.",
+     "class": "artificer",
+     "stat_weights": {
+      "int": 2
+     },
+     "skills": [
+      "investigation"
+     ],
+     "style": "ranged",
+     "spell_tags": [
+      "trick"
+     ],
+     "spell_hint": "mending",
+     "opposition_dc": 13,
+     "success_text": "It works! Mostly toast!",
+     "fail_text": "It butters the teacher."
+    },
+    {
+     "id": "s2_paladin",
+     "text": "Report the kid who ate the hamster food. For justice.",
+     "class": "paladin",
+     "stat_weights": {
+      "cha": 1,
+      "str": 1
+     },
+     "skills": [
+      "insight",
+      "persuasion"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Justice is served. Lunch is not, for him.",
+     "fail_text": "Turns out it was you. You sleepwalk."
+    },
+    {
+     "id": "s2_bard",
+     "text": "Do impressions of the teacher. Accurate ones.",
+     "class": "bard",
+     "stat_weights": {
+      "cha": 2,
+      "wis": 1
+     },
+     "skills": [
+      "performance",
+      "deception"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "trick"
+     ],
+     "spell_hint": "minor illusion",
+     "opposition_dc": 13,
+     "success_text": "Class roars. Teacher, grudgingly, also roars.",
+     "fail_text": "Teacher does an impression of your report card."
+    }
+   ],
+   "order": 2,
+   "next": 3
+  },
+  {
+   "id": 3,
+   "key": "s3_job",
+   "title": "First Job at the Turnip Farm",
+   "text": "Age twelve. Your first job: the Turnip Farm. Today the prize turnip has gone missing before the fair.",
+   "options": [
+    {
+     "id": "s3_cleric",
+     "text": "Comfort the weeping farmer and organize a search party.",
+     "class": "cleric",
+     "stat_weights": {
+      "wis": 1,
+      "cha": 1
+     },
+     "skills": [
+      "insight",
+      "medicine"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "protect"
+     ],
+     "spell_hint": "bless",
+     "opposition_dc": 13,
+     "success_text": "The town finds it together. There's a potluck.",
+     "fail_text": "No turnip, but a lovely potluck."
+    },
+    {
+     "id": "s3_monk",
+     "text": "Meditate on the nature of loss. Possibly of turnips.",
+     "class": "monk",
+     "stat_weights": {
+      "wis": 2,
+      "dex": 1
+     },
+     "skills": [
+      "insight"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Enlightenment reveals the turnip behind the shed.",
+     "fail_text": "Enlightenment reveals nothing, but you feel great."
+    },
+    {
+     "id": "s3_ranger",
+     "text": "Follow the dirt trail out to the woods.",
+     "class": "ranger",
+     "stat_weights": {
+      "wis": 1,
+      "dex": 1
+     },
+     "skills": [
+      "survival",
+      "nature"
+     ],
+     "style": "ranged",
+     "spell_tags": [
+      "detect"
+     ],
+     "spell_hint": "hunter's mark",
+     "opposition_dc": 13,
+     "success_text": "You find the turnip with a raccoon, who returns it with dignity.",
+     "fail_text": "You get lost. The raccoon guides you home, smugly."
+    },
+    {
+     "id": "s3_barbarian",
+     "text": "Yell at the field until the turnip confesses.",
+     "class": "barbarian",
+     "stat_weights": {
+      "str": 1,
+      "con": 2
+     },
+     "skills": [
+      "intimidation"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Something rustles. The turnip was under a hat all along.",
+     "fail_text": "Your boss confesses to being scared of you. Promotion denied."
+    },
+    {
+     "id": "s3_artificer",
+     "text": "Rig a turnip trap with a crate, a stick, and a string.",
+     "class": "artificer",
+     "stat_weights": {
+      "int": 2,
+      "dex": 1
+     },
+     "skills": [
+      "sleight_of_hand",
+      "investigation"
+     ],
+     "style": "ranged",
+     "spell_tags": [
+      "trick"
+     ],
+     "spell_hint": "mending",
+     "opposition_dc": 13,
+     "success_text": "You catch the thief: a goat. Justice is goat-shaped.",
+     "fail_text": "You catch your boss. He is not amused."
+    },
+    {
+     "id": "s3_wizard",
+     "text": "Analyze the soil composition of the hole left behind.",
+     "class": "wizard",
+     "stat_weights": {
+      "int": 2
+     },
+     "skills": [
+      "investigation",
+      "nature"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "detect"
+     ],
+     "spell_hint": "detect magic",
+     "opposition_dc": 13,
+     "success_text": "The soil says: moles. Case closed.",
+     "fail_text": "The soil says nothing. You say a lot."
+    },
+    {
+     "id": "s3_fighter",
+     "text": "Stand guard over the remaining turnips with a pitchfork.",
+     "class": "fighter",
+     "stat_weights": {
+      "str": 1,
+      "con": 1
+     },
+     "skills": [
+      "perception",
+      "athletics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "No more turnips go missing. You're promoted to Turnip Sergeant.",
+     "fail_text": "You guard the wrong field. The carrots feel very safe."
+    },
+    {
+     "id": "s3_druid",
+     "text": "Ask the other turnips where he went.",
+     "class": "druid",
+     "stat_weights": {
+      "wis": 2
+     },
+     "skills": [
+      "nature"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "nature"
+     ],
+     "spell_hint": "speak with animals",
+     "opposition_dc": 13,
+     "success_text": "The turnips point. Vegetables are snitches.",
+     "fail_text": "The turnips stay loyal. Silent. Unsettling."
+    },
+    {
+     "id": "s3_paladin",
+     "text": "Swear an oath to find the turnip or die trying.",
+     "class": "paladin",
+     "stat_weights": {
+      "str": 1,
+      "cha": 1,
+      "con": 1
+     },
+     "skills": [
+      "persuasion",
+      "religion"
+     ],
+     "style": "melee",
+     "spell_tags": [
+      "radiant"
+     ],
+     "spell_hint": "divine favor",
+     "opposition_dc": 13,
+     "success_text": "Found. The oath remains binding, unnecessarily.",
+     "fail_text": "You don't die but you do get very sunburned."
+    },
+    {
+     "id": "s3_warlock",
+     "text": "Make a tiny bargain with the shadow under the porch.",
+     "class": "warlock",
+     "stat_weights": {
+      "cha": 1,
+      "int": 1
+     },
+     "skills": [
+      "arcana",
+      "deception"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "force"
+     ],
+     "spell_hint": "eldritch blast",
+     "opposition_dc": 13,
+     "success_text": "The turnip returns. The shadow wants your middle name.",
+     "fail_text": "The shadow just laughs. It's fine. It's fine."
+    },
+    {
+     "id": "s3_sorcerer",
+     "text": "Wish very hard for the turnip to come back.",
+     "class": "sorcerer",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "arcana"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "force"
+     ],
+     "spell_hint": "magic missile",
+     "opposition_dc": 13,
+     "success_text": "It falls out of the sky. Slightly cooked.",
+     "fail_text": "A different turnip falls. Bigger. Angrier."
+    },
+    {
+     "id": "s3_rogue",
+     "text": "Check the neighbor farmer's barn. At night. Uninvited.",
+     "class": "rogue",
+     "stat_weights": {
+      "dex": 2,
+      "wis": 1
+     },
+     "skills": [
+      "stealth",
+      "investigation"
+     ],
+     "style": "sneaky",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Turnip recovered, plus a lifetime of leverage.",
+     "fail_text": "Neighbor's dog. Running. Lots of running."
+    },
+    {
+     "id": "s3_bard",
+     "text": "Write a ballad of the stolen turnip and sing it at market.",
+     "class": "bard",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "performance",
+      "persuasion"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "charm"
+     ],
+     "spell_hint": "charm person",
+     "opposition_dc": 13,
+     "success_text": "The thief, moved to tears, returns it.",
+     "fail_text": "The ballad charts. The turnip remains gone. You're famous for the wrong thing."
+    }
+   ],
+   "order": 3,
+   "next": 4
+  },
+  {
+   "id": 4,
+   "key": "s4_fest",
+   "title": "The Barefoot Festival",
+   "text": "At sixteen you enter the Alabamantia Barefoot Festival, where everyone competes for the Golden Toe.",
+   "options": [
+    {
+     "id": "s4_artificer",
+     "text": "Present your mechanical foot-washer.",
+     "class": "artificer",
+     "stat_weights": {
+      "int": 2
+     },
+     "skills": [
+      "investigation",
+      "sleight_of_hand"
+     ],
+     "style": "ranged",
+     "spell_tags": [
+      "heal"
+     ],
+     "spell_hint": "cure wounds",
+     "opposition_dc": 13,
+     "success_text": "Every foot in town lines up.",
+     "fail_text": "It washes too hard. Several people lose a toenail."
+    },
+    {
+     "id": "s4_wizard",
+     "text": "Enter the puzzle contest and finish before the hourglass flips.",
+     "class": "wizard",
+     "stat_weights": {
+      "int": 2
+     },
+     "skills": [
+      "investigation"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "protect"
+     ],
+     "spell_hint": "shield",
+     "opposition_dc": 13,
+     "success_text": "Champion of brains, crowned with a puzzle hat.",
+     "fail_text": "You solve it, but it was the wrong puzzle."
+    },
+    {
+     "id": "s4_fighter",
+     "text": "Enter the barefoot wrestling bracket.",
+     "class": "fighter",
+     "stat_weights": {
+      "str": 2,
+      "con": 1
+     },
+     "skills": [
+      "athletics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Champion. Champion of feet.",
+     "fail_text": "Pinned by a grandmother. Again."
+    },
+    {
+     "id": "s4_ranger",
+     "text": "Win the archery event standing on one leg.",
+     "class": "ranger",
+     "stat_weights": {
+      "dex": 2
+     },
+     "skills": [
+      "perception"
+     ],
+     "style": "ranged",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Bullseye. Three of them.",
+     "fail_text": "You hit the festival banner, which falls on the mayor."
+    },
+    {
+     "id": "s4_cleric",
+     "text": "Run the first-aid tent for everyone who tried the coal walk.",
+     "class": "cleric",
+     "stat_weights": {
+      "wis": 2,
+      "con": 1
+     },
+     "skills": [
+      "medicine"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "heal"
+     ],
+     "spell_hint": "cure wounds",
+     "opposition_dc": 13,
+     "success_text": "You save many soles.",
+     "fail_text": "You run out of bandages and use your shirt. Popular, at least."
+    },
+    {
+     "id": "s4_warlock",
+     "text": "Read the fortune-teller's fortune for her.",
+     "class": "warlock",
+     "stat_weights": {
+      "cha": 1,
+      "wis": 1
+     },
+     "skills": [
+      "insight",
+      "deception"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "necrotic",
+      "psychic"
+     ],
+     "spell_hint": "hex",
+     "opposition_dc": 13,
+     "success_text": "She packs up her tent and leaves town in tears.",
+     "fail_text": "She reads yours back. It's worse."
+    },
+    {
+     "id": "s4_rogue",
+     "text": "Bet on every event and quietly \"adjust\" the odds.",
+     "class": "rogue",
+     "stat_weights": {
+      "dex": 1,
+      "cha": 1
+     },
+     "skills": [
+      "deception",
+      "sleight_of_hand"
+     ],
+     "style": "sneaky",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "You win the purse. The bookie suspects nothing.",
+     "fail_text": "The bookie suspects everything. You owe him a pig."
+    },
+    {
+     "id": "s4_barbarian",
+     "text": "Enter the hot-coal walk and sprint it.",
+     "class": "barbarian",
+     "stat_weights": {
+      "con": 2,
+      "str": 1
+     },
+     "skills": [
+      "athletics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Golden Toe! Your feet are now leather.",
+     "fail_text": "You hop. Screaming. It's still a record."
+    },
+    {
+     "id": "s4_bard",
+     "text": "Enter the talent show with a song about feet.",
+     "class": "bard",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "performance"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "thunder"
+     ],
+     "spell_hint": "thunderwave",
+     "opposition_dc": 13,
+     "success_text": "The crowd chants your name. Gross but flattering.",
+     "fail_text": "The crowd chants a different name."
+    },
+    {
+     "id": "s4_paladin",
+     "text": "Volunteer to judge, fairly, against massive bribery.",
+     "class": "paladin",
+     "stat_weights": {
+      "cha": 1,
+      "wis": 1,
+      "str": 1
+     },
+     "skills": [
+      "insight",
+      "persuasion"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Incorruptible. Respected. Unpopular.",
+     "fail_text": "You accept a single pie. You think about it forever."
+    },
+    {
+     "id": "s4_monk",
+     "text": "Walk the hot coals slowly, eyes closed, humming.",
+     "class": "monk",
+     "stat_weights": {
+      "dex": 1,
+      "wis": 1,
+      "con": 1
+     },
+     "skills": [
+      "acrobatics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Not a single blister. People bow.",
+     "fail_text": "Many blisters. Inner peace, though."
+    },
+    {
+     "id": "s4_sorcerer",
+     "text": "Light the festival bonfire with a sneeze.",
+     "class": "sorcerer",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "performance"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "fire"
+     ],
+     "spell_hint": "fire bolt",
+     "opposition_dc": 13,
+     "success_text": "The crowd gasps. The bonfire is enormous.",
+     "fail_text": "The crowd gasps. The mayor's eyebrows are gone."
+    },
+    {
+     "id": "s4_druid",
+     "text": "Enter the \"biggest vegetable\" contest with something you grew in a single night.",
+     "class": "druid",
+     "stat_weights": {
+      "wis": 2
+     },
+     "skills": [
+      "nature"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "heal",
+      "nature"
+     ],
+     "spell_hint": "goodberry",
+     "opposition_dc": 13,
+     "success_text": "First prize. The squash has opinions.",
+     "fail_text": "The squash wins, then leaves."
+    }
+   ],
+   "order": 4,
+   "next": 5
+  },
+  {
+   "id": 5,
+   "key": "s5_possum",
+   "title": "The Great Possum",
+   "text": "A possum the size of a hay cart has taken the town granary. The mayor (still eyebrowless) asks for volunteers.",
+   "options": [
+    {
+     "id": "s5_rogue",
+     "text": "Sneak in and steal the grain back, sack by sack.",
+     "class": "rogue",
+     "stat_weights": {
+      "dex": 2
+     },
+     "skills": [
+      "stealth"
+     ],
+     "style": "sneaky",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Granary emptied. Possum confused.",
+     "fail_text": "You're carried around in the possum's pouch. Not a marsupial thing. It just likes you."
+    },
+    {
+     "id": "s5_druid",
+     "text": "Become a slightly larger possum.",
+     "class": "druid",
+     "stat_weights": {
+      "wis": 2,
+      "con": 1
+     },
+     "skills": [
+      "nature",
+      "animal_handling"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "nature",
+      "poison"
+     ],
+     "spell_hint": "entangle",
+     "opposition_dc": 13,
+     "success_text": "You assert dominance. Possum dominance.",
+     "fail_text": "You become a smaller possum. You're adopted."
+    },
+    {
+     "id": "s5_artificer",
+     "text": "Build a possum catapult. For science.",
+     "class": "artificer",
+     "stat_weights": {
+      "int": 2,
+      "str": 1
+     },
+     "skills": [
+      "investigation"
+     ],
+     "style": "ranged",
+     "spell_tags": [
+      "force"
+     ],
+     "spell_hint": "catapult",
+     "opposition_dc": 13,
+     "success_text": "The possum flies into the next county.",
+     "fail_text": "The catapult flies into the next county. The possum watches."
+    },
+    {
+     "id": "s5_barbarian",
+     "text": "Charge it, screaming your own name.",
+     "class": "barbarian",
+     "stat_weights": {
+      "str": 2
+     },
+     "skills": [
+      "athletics",
+      "intimidation"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "You and the possum fall in a heap. You win the heap.",
+     "fail_text": "The possum screams louder. You respect that."
+    },
+    {
+     "id": "s5_paladin",
+     "text": "Challenge the possum to an honorable duel at noon.",
+     "class": "paladin",
+     "stat_weights": {
+      "str": 2,
+      "cha": 1
+     },
+     "skills": [
+      "persuasion"
+     ],
+     "style": "melee",
+     "spell_tags": [
+      "protect"
+     ],
+     "spell_hint": "shield of faith",
+     "opposition_dc": 13,
+     "success_text": "It shows up. It loses. It's oddly gracious.",
+     "fail_text": "It shows up at one. You were at lunch."
+    },
+    {
+     "id": "s5_ranger",
+     "text": "Lure it out with a trail of rotten fruit.",
+     "class": "ranger",
+     "stat_weights": {
+      "wis": 1,
+      "dex": 1
+     },
+     "skills": [
+      "survival",
+      "animal_handling"
+     ],
+     "style": "ranged",
+     "spell_tags": [
+      "detect"
+     ],
+     "spell_hint": "hunter's mark",
+     "opposition_dc": 13,
+     "success_text": "It follows the trail clear out of town.",
+     "fail_text": "It follows the trail into your house."
+    },
+    {
+     "id": "s5_fighter",
+     "text": "March in with a shield and a plan.",
+     "class": "fighter",
+     "stat_weights": {
+      "str": 2,
+      "con": 1
+     },
+     "skills": [
+      "athletics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "The possum yields. You're the town's shield now.",
+     "fail_text": "The possum plays dead. So do you, by accident."
+    },
+    {
+     "id": "s5_warlock",
+     "text": "Ask your well-book how to deal with possums.",
+     "class": "warlock",
+     "stat_weights": {
+      "cha": 1,
+      "int": 1
+     },
+     "skills": [
+      "arcana"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "force"
+     ],
+     "spell_hint": "eldritch blast",
+     "opposition_dc": 13,
+     "success_text": "A dark beam. The possum is gone. Don't ask where.",
+     "fail_text": "The book says \"befriend it.\" Now you own a giant possum."
+    },
+    {
+     "id": "s5_wizard",
+     "text": "Read the possum chapter in the library.",
+     "class": "wizard",
+     "stat_weights": {
+      "int": 2
+     },
+     "skills": [
+      "nature",
+      "investigation"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "trick",
+      "charm"
+     ],
+     "spell_hint": "sleep",
+     "opposition_dc": 13,
+     "success_text": "Chapter one: possums love sleep. Zzz.",
+     "fail_text": "The chapter was about otters."
+    },
+    {
+     "id": "s5_bard",
+     "text": "Insult the possum until it leaves out of embarrassment.",
+     "class": "bard",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "performance",
+      "intimidation"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "psychic",
+      "charm"
+     ],
+     "spell_hint": "vicious mockery",
+     "opposition_dc": 13,
+     "success_text": "It slinks off in shame.",
+     "fail_text": "It writes a rebuttal song. It's better."
+    },
+    {
+     "id": "s5_sorcerer",
+     "text": "Shoot sparks at it with no idea how.",
+     "class": "sorcerer",
+     "stat_weights": {
+      "cha": 2,
+      "con": 1
+     },
+     "skills": [
+      "arcana"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "acid",
+      "lightning"
+     ],
+     "spell_hint": "chromatic orb",
+     "opposition_dc": 13,
+     "success_text": "Crispy possum. The town eats well.",
+     "fail_text": "Crispy granary. The possum eats well."
+    },
+    {
+     "id": "s5_cleric",
+     "text": "Bless the granary so the possum feels guilty.",
+     "class": "cleric",
+     "stat_weights": {
+      "wis": 2
+     },
+     "skills": [
+      "religion"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "protect"
+     ],
+     "spell_hint": "bless",
+     "opposition_dc": 13,
+     "success_text": "The possum weeps and leaves an offering.",
+     "fail_text": "The possum is now blessed. It's harder to kill."
+    },
+    {
+     "id": "s5_monk",
+     "text": "Stand at the door and refuse to let it pass.",
+     "class": "monk",
+     "stat_weights": {
+      "dex": 2,
+      "con": 1
+     },
+     "skills": [
+      "acrobatics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Nothing passes. The possum takes up meditation.",
+     "fail_text": "It passes. Over you. Slowly."
+    }
+   ],
+   "order": 5,
+   "next": 6
+  },
+  {
+   "id": 6,
+   "key": "s6_shoes",
+   "title": "The Shoe Question",
+   "text": "You're ready to leave Alabamantia. A traveling merchant has exactly one pair of shoes. Everyone in town wants them.",
+   "options": [
+    {
+     "id": "s6_bard",
+     "text": "Haggle with the merchant using only flattery.",
+     "class": "bard",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "persuasion"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "charm"
+     ],
+     "spell_hint": "charm person",
+     "opposition_dc": 13,
+     "success_text": "He lowers the price. You still can't afford it. But you're friends now.",
+     "fail_text": "He raises the price. He's offended by your flattery."
+    },
+    {
+     "id": "s6_artificer",
+     "text": "Make roller skates out of the merchant's cart wheels.",
+     "class": "artificer",
+     "stat_weights": {
+      "int": 2,
+      "dex": 1
+     },
+     "skills": [
+      "sleight_of_hand"
+     ],
+     "style": "ranged",
+     "spell_tags": [
+      "trick"
+     ],
+     "spell_hint": "mending",
+     "opposition_dc": 13,
+     "success_text": "Wheee! Right out of town.",
+     "fail_text": "Wheee! Right into the duck pond."
+    },
+    {
+     "id": "s6_sorcerer",
+     "text": "Accidentally turn the shoes into frogs.",
+     "class": "sorcerer",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "arcana"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "fire",
+      "lightning"
+     ],
+     "spell_hint": "chaos bolt",
+     "opposition_dc": 13,
+     "success_text": "The frogs follow you. Loyal frogs.",
+     "fail_text": "The frogs prefer the merchant."
+    },
+    {
+     "id": "s6_barbarian",
+     "text": "Outbid everyone by yelling \"MINE.\"",
+     "class": "barbarian",
+     "stat_weights": {
+      "str": 1,
+      "cha": 1
+     },
+     "skills": [
+      "intimidation"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Shoes acquired! They're three sizes too small.",
+     "fail_text": "Everyone yells \"MINE\" back. It's a whole thing."
+    },
+    {
+     "id": "s6_ranger",
+     "text": "Make your own sandals out of bark.",
+     "class": "ranger",
+     "stat_weights": {
+      "wis": 1,
+      "dex": 1
+     },
+     "skills": [
+      "survival"
+     ],
+     "style": "ranged",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Sandals! They fall apart by noon.",
+     "fail_text": "They're splintery. So are you."
+    },
+    {
+     "id": "s6_paladin",
+     "text": "Give them to the poor widow next door instead.",
+     "class": "paladin",
+     "stat_weights": {
+      "cha": 1,
+      "wis": 1,
+      "str": 1
+     },
+     "skills": [
+      "persuasion",
+      "religion"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "She's thrilled. Your feet: still bare. Your heart: full.",
+     "fail_text": "She doesn't want them. She also has bare feet. Solidarity."
+    },
+    {
+     "id": "s6_cleric",
+     "text": "Pray for a sign, and then for shoes.",
+     "class": "cleric",
+     "stat_weights": {
+      "wis": 2
+     },
+     "skills": [
+      "religion"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "protect",
+      "detect"
+     ],
+     "spell_hint": "guidance",
+     "opposition_dc": 13,
+     "success_text": "A sign! It says \"NO SHOES.\"",
+     "fail_text": "The sign says \"NO SERVICE.\""
+    },
+    {
+     "id": "s6_fighter",
+     "text": "Win them in a fair arm-wrestling bracket.",
+     "class": "fighter",
+     "stat_weights": {
+      "str": 2,
+      "con": 1
+     },
+     "skills": [
+      "athletics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Victory. The shoes are left-footed. Both.",
+     "fail_text": "A blacksmith's kid. Strong arms."
+    },
+    {
+     "id": "s6_wizard",
+     "text": "Determine that the shoes are statistically unlikely to fit.",
+     "class": "wizard",
+     "stat_weights": {
+      "int": 2
+     },
+     "skills": [
+      "investigation"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "detect"
+     ],
+     "spell_hint": "identify",
+     "opposition_dc": 13,
+     "success_text": "You were right. Smugness keeps your feet warm.",
+     "fail_text": "They would have fit. You'll never know peace."
+    },
+    {
+     "id": "s6_rogue",
+     "text": "Swap them out for an identical box of rocks.",
+     "class": "rogue",
+     "stat_weights": {
+      "dex": 2
+     },
+     "skills": [
+      "sleight_of_hand"
+     ],
+     "style": "sneaky",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Shoes! You walk away before you even look in the box. Rocks. You stole the rocks.",
+     "fail_text": "You get the rocks. Tradition holds: barefoot."
+    },
+    {
+     "id": "s6_monk",
+     "text": "Decline. Shoes are an illusion.",
+     "class": "monk",
+     "stat_weights": {
+      "wis": 2,
+      "dex": 1
+     },
+     "skills": [
+      "insight"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "You walk on with perfect calm and thick heels.",
+     "fail_text": "You step on a bee immediately."
+    },
+    {
+     "id": "s6_warlock",
+     "text": "Promise the merchant something you don't technically own.",
+     "class": "warlock",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "deception"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "cold",
+      "protect"
+     ],
+     "spell_hint": "armor of agathys",
+     "opposition_dc": 13,
+     "success_text": "He agrees. The shoes are cursed. They tap-dance at midnight.",
+     "fail_text": "He's a devil too. You both recognize it and back away."
+    },
+    {
+     "id": "s6_druid",
+     "text": "Insist that shoes are a cage for the toes.",
+     "class": "druid",
+     "stat_weights": {
+      "wis": 2,
+      "con": 1
+     },
+     "skills": [
+      "nature"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "protect",
+      "nature"
+     ],
+     "spell_hint": "barkskin",
+     "opposition_dc": 13,
+     "success_text": "Your feet toughen like oak.",
+     "fail_text": "Your feet toughen like soft oak."
+    }
+   ],
+   "order": 6,
+   "next": 7
+  },
+  {
+   "id": 7,
+   "key": "s7_road",
+   "title": "The Road Out",
+   "text": "On the road out of Alabamantia, three bandits block the way. One is clearly somebody's uncle.",
+   "options": [
+    {
+     "id": "s7_fighter",
+     "text": "Draw your stick-sword. You've been practicing.",
+     "class": "fighter",
+     "stat_weights": {
+      "str": 2
+     },
+     "skills": [
+      "athletics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "The bandits flee. The uncle compliments your form.",
+     "fail_text": "The uncle disarms you, then gives you tips."
+    },
+    {
+     "id": "s7_cleric",
+     "text": "Offer to heal the uncle's bad knee.",
+     "class": "cleric",
+     "stat_weights": {
+      "wis": 2
+     },
+     "skills": [
+      "medicine"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "heal"
+     ],
+     "spell_hint": "cure wounds",
+     "opposition_dc": 13,
+     "success_text": "He's moved. They escort you to the next town.",
+     "fail_text": "You make the knee worse. He limps off swearing."
+    },
+    {
+     "id": "s7_monk",
+     "text": "Just keep walking. Through them.",
+     "class": "monk",
+     "stat_weights": {
+      "dex": 2,
+      "con": 1
+     },
+     "skills": [
+      "acrobatics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "They step aside, confused.",
+     "fail_text": "They don't. It's like walking into furniture."
+    },
+    {
+     "id": "s7_ranger",
+     "text": "Shoot their hats off from the bushes.",
+     "class": "ranger",
+     "stat_weights": {
+      "dex": 2
+     },
+     "skills": [
+      "stealth",
+      "perception"
+     ],
+     "style": "ranged",
+     "spell_tags": [
+      "detect"
+     ],
+     "spell_hint": "hunter's mark",
+     "opposition_dc": 13,
+     "success_text": "Hatless and humbled, they run.",
+     "fail_text": "You shoot a passing hat merchant."
+    },
+    {
+     "id": "s7_druid",
+     "text": "Summon every squirrel in the area.",
+     "class": "druid",
+     "stat_weights": {
+      "wis": 2
+     },
+     "skills": [
+      "nature",
+      "animal_handling"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "nature"
+     ],
+     "spell_hint": "entangle",
+     "opposition_dc": 13,
+     "success_text": "A furry tide. The bandits are never the same.",
+     "fail_text": "Two squirrels. Unmotivated."
+    },
+    {
+     "id": "s7_bard",
+     "text": "Convince them you're a famous bandit.",
+     "class": "bard",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "deception"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "charm",
+      "trick"
+     ],
+     "spell_hint": "tasha's hideous laughter",
+     "opposition_dc": 13,
+     "success_text": "They hire you. You quit. Great reference.",
+     "fail_text": "They ask for your autograph. You misspell your own name."
+    },
+    {
+     "id": "s7_wizard",
+     "text": "Point out a loophole in banditry law.",
+     "class": "wizard",
+     "stat_weights": {
+      "int": 2,
+      "cha": 1
+     },
+     "skills": [
+      "history",
+      "persuasion"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "trick",
+      "charm"
+     ],
+     "spell_hint": "sleep",
+     "opposition_dc": 13,
+     "success_text": "They give up and go to law school.",
+     "fail_text": "They ask a follow-up question. You panic."
+    },
+    {
+     "id": "s7_warlock",
+     "text": "Let your shadow do the talking.",
+     "class": "warlock",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "intimidation"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "necrotic",
+      "psychic"
+     ],
+     "spell_hint": "hex",
+     "opposition_dc": 13,
+     "success_text": "Your shadow is very scary. They run.",
+     "fail_text": "Your shadow sides with them."
+    },
+    {
+     "id": "s7_sorcerer",
+     "text": "Glow menacingly.",
+     "class": "sorcerer",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "intimidation"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "radiant",
+      "light"
+     ],
+     "spell_hint": "burning hands",
+     "opposition_dc": 13,
+     "success_text": "They flee. You don't know how to stop glowing.",
+     "fail_text": "You glow. They like it. Now it's a dance party."
+    },
+    {
+     "id": "s7_paladin",
+     "text": "Lecture the bandits about their life choices.",
+     "class": "paladin",
+     "stat_weights": {
+      "cha": 2,
+      "str": 1
+     },
+     "skills": [
+      "persuasion"
+     ],
+     "style": "melee",
+     "spell_tags": [
+      "charm"
+     ],
+     "spell_hint": "compelled duel",
+     "opposition_dc": 13,
+     "success_text": "Two of them quit banditry. The uncle cries.",
+     "fail_text": "They mug you for your lecture notes."
+    },
+    {
+     "id": "s7_rogue",
+     "text": "Pick their pockets while they talk.",
+     "class": "rogue",
+     "stat_weights": {
+      "dex": 2
+     },
+     "skills": [
+      "sleight_of_hand",
+      "stealth"
+     ],
+     "style": "sneaky",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "You leave with more money than you came with.",
+     "fail_text": "You pick the uncle's pocket. It's full of bees."
+    },
+    {
+     "id": "s7_artificer",
+     "text": "Set off your homemade smoke bomb.",
+     "class": "artificer",
+     "stat_weights": {
+      "int": 2,
+      "dex": 1
+     },
+     "skills": [
+      "sleight_of_hand"
+     ],
+     "style": "ranged",
+     "spell_tags": [
+      "trick"
+     ],
+     "spell_hint": "grease",
+     "opposition_dc": 13,
+     "success_text": "You vanish dramatically.",
+     "fail_text": "You vanish dramatically, into a ditch."
+    },
+    {
+     "id": "s7_barbarian",
+     "text": "Rip a fence post out of the ground and swing it.",
+     "class": "barbarian",
+     "stat_weights": {
+      "str": 2,
+      "con": 1
+     },
+     "skills": [
+      "athletics",
+      "intimidation"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Bandits: gone. Fence: also gone.",
+     "fail_text": "The farmer who owns the fence chases you all."
+    }
+   ],
+   "order": 7,
+   "next": 8
+  },
+  {
+   "id": 8,
+   "key": "s8_city",
+   "title": "The Big City of Copperbutton",
+   "text": "You reach the city of Copperbutton. You have no money, no shoes, and one squirrel following you.",
+   "options": [
+    {
+     "id": "s8_bard",
+     "text": "Busk in the market square.",
+     "class": "bard",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "performance"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "heal"
+     ],
+     "spell_hint": "healing word",
+     "opposition_dc": 13,
+     "success_text": "Coins rain! Some are real.",
+     "fail_text": "You're paid to stop."
+    },
+    {
+     "id": "s8_fighter",
+     "text": "Join the city watch.",
+     "class": "fighter",
+     "stat_weights": {
+      "str": 1,
+      "con": 1
+     },
+     "skills": [
+      "athletics",
+      "perception"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Uniform, salary, and a helmet that almost fits.",
+     "fail_text": "Your first arrest is your sergeant."
+    },
+    {
+     "id": "s8_rogue",
+     "text": "Work for the Thieves' Guild \"temporarily.\"",
+     "class": "rogue",
+     "stat_weights": {
+      "dex": 2,
+      "cha": 1
+     },
+     "skills": [
+      "stealth",
+      "deception"
+     ],
+     "style": "sneaky",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "First job: a success. Second job: a promotion. You're very good at this.",
+     "fail_text": "First job: the guild leader's own house."
+    },
+    {
+     "id": "s8_wizard",
+     "text": "Apply to the Arcane College.",
+     "class": "wizard",
+     "stat_weights": {
+      "int": 2
+     },
+     "skills": [
+      "arcana",
+      "history"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "force"
+     ],
+     "spell_hint": "magic missile",
+     "opposition_dc": 13,
+     "success_text": "Accepted! Tuition: everything you own.",
+     "fail_text": "Rejected. You audit classes from the window."
+    },
+    {
+     "id": "s8_druid",
+     "text": "Live in the park and talk to the pigeons.",
+     "class": "druid",
+     "stat_weights": {
+      "wis": 2,
+      "con": 1
+     },
+     "skills": [
+      "nature"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "nature"
+     ],
+     "spell_hint": "speak with animals",
+     "opposition_dc": 13,
+     "success_text": "The pigeons are informants. You know everything.",
+     "fail_text": "The pigeons know nothing. They lie."
+    },
+    {
+     "id": "s8_warlock",
+     "text": "Sign a \"short-term employment contract\" with a smiling man.",
+     "class": "warlock",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "deception"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "lightning"
+     ],
+     "spell_hint": "witch bolt",
+     "opposition_dc": 13,
+     "success_text": "Excellent pay. Don't read clause eleven.",
+     "fail_text": "You read clause eleven."
+    },
+    {
+     "id": "s8_barbarian",
+     "text": "Work at the docks lifting crates nobody else can lift.",
+     "class": "barbarian",
+     "stat_weights": {
+      "str": 2,
+      "con": 1
+     },
+     "skills": [
+      "athletics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "You're the dockmaster's favorite.",
+     "fail_text": "You lift a crate with a sleeping sailor inside. He's upset."
+    },
+    {
+     "id": "s8_paladin",
+     "text": "Volunteer at the knights' stables mucking stalls.",
+     "class": "paladin",
+     "stat_weights": {
+      "str": 2,
+      "con": 1
+     },
+     "skills": [
+      "animal_handling"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "A knight notices your hard work.",
+     "fail_text": "A horse notices you and kicks you."
+    },
+    {
+     "id": "s8_sorcerer",
+     "text": "Cause a small magical incident at the fountain.",
+     "class": "sorcerer",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "arcana"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "cold",
+      "light"
+     ],
+     "spell_hint": "color spray",
+     "opposition_dc": 13,
+     "success_text": "People throw coins at the rainbow.",
+     "fail_text": "The fountain floods. You're on a wanted poster."
+    },
+    {
+     "id": "s8_cleric",
+     "text": "Help at the temple soup kitchen.",
+     "class": "cleric",
+     "stat_weights": {
+      "wis": 2
+     },
+     "skills": [
+      "medicine",
+      "religion"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "heal"
+     ],
+     "spell_hint": "cure wounds",
+     "opposition_dc": 13,
+     "success_text": "The poor bless you. Free soup.",
+     "fail_text": "You burn the soup. They bless you anyway."
+    },
+    {
+     "id": "s8_artificer",
+     "text": "Open a repair stall: \"Fix Anything (Mostly).\"",
+     "class": "artificer",
+     "stat_weights": {
+      "int": 2
+     },
+     "skills": [
+      "investigation"
+     ],
+     "style": "ranged",
+     "spell_tags": [
+      "trick"
+     ],
+     "spell_hint": "tinker's tools",
+     "opposition_dc": 13,
+     "success_text": "Business booms.",
+     "fail_text": "Business also booms. Literally."
+    },
+    {
+     "id": "s8_ranger",
+     "text": "Hunt rats in the sewers for a copper each.",
+     "class": "ranger",
+     "stat_weights": {
+      "dex": 1,
+      "wis": 1
+     },
+     "skills": [
+      "survival"
+     ],
+     "style": "ranged",
+     "spell_tags": [
+      "nature"
+     ],
+     "spell_hint": "ensnaring strike",
+     "opposition_dc": 13,
+     "success_text": "Rat count: forty. Smell count: one.",
+     "fail_text": "The rats unionize."
+    },
+    {
+     "id": "s8_monk",
+     "text": "Get a job sweeping the monastery steps.",
+     "class": "monk",
+     "stat_weights": {
+      "wis": 1,
+      "dex": 1
+     },
+     "skills": [
+      "acrobatics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "They invite you in. The steps are clean forever.",
+     "fail_text": "You sweep the wrong monastery. It's a bakery."
+    }
+   ],
+   "order": 8,
+   "next": 9
+  },
+  {
+   "id": 9,
+   "key": "s9_disaster",
+   "title": "The Disaster",
+   "text": "Your new life in Copperbutton is going well until, all at once, it isn't.",
+   "options": [
+    {
+     "id": "s9_rogue",
+     "text": "Get caught robbing the mayor's sock drawer.",
+     "class": "rogue",
+     "stat_weights": {
+      "dex": 2,
+      "con": 1
+     },
+     "skills": [
+      "sleight_of_hand"
+     ],
+     "style": "sneaky",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "You escape with socks! Still no shoes.",
+     "fail_text": "Chased out of town wearing three of his socks."
+    },
+    {
+     "id": "s9_cleric",
+     "text": "Heal the wrong person (a wanted murderer).",
+     "class": "cleric",
+     "stat_weights": {
+      "wis": 2
+     },
+     "skills": [
+      "medicine"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "heal"
+     ],
+     "spell_hint": "cure wounds",
+     "opposition_dc": 13,
+     "success_text": "He reforms! He becomes a baker.",
+     "fail_text": "He thanks you and runs. You're a suspect now."
+    },
+    {
+     "id": "s9_paladin",
+     "text": "Expose a corrupt official in public.",
+     "class": "paladin",
+     "stat_weights": {
+      "cha": 2,
+      "str": 1
+     },
+     "skills": [
+      "persuasion",
+      "insight"
+     ],
+     "style": "melee",
+     "spell_tags": [
+      "thunder"
+     ],
+     "spell_hint": "thunderous smite",
+     "opposition_dc": 13,
+     "success_text": "He's arrested. You're fired anyway.",
+     "fail_text": "It's your boss. Fired, and he gets a statue."
+    },
+    {
+     "id": "s9_wizard",
+     "text": "Blow up the college lab.",
+     "class": "wizard",
+     "stat_weights": {
+      "int": 2,
+      "con": 1
+     },
+     "skills": [
+      "arcana"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "thunder",
+      "acid"
+     ],
+     "spell_hint": "shatter",
+     "opposition_dc": 13,
+     "success_text": "You're blamed, then hired to explain it.",
+     "fail_text": "You're blamed, then expelled."
+    },
+    {
+     "id": "s9_sorcerer",
+     "text": "Sneeze during an important ceremony.",
+     "class": "sorcerer",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "arcana"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "fire"
+     ],
+     "spell_hint": "fire bolt",
+     "opposition_dc": 13,
+     "success_text": "Fireworks! Everyone thinks it's planned.",
+     "fail_text": "Fire. Just fire."
+    },
+    {
+     "id": "s9_warlock",
+     "text": "Clause eleven comes due.",
+     "class": "warlock",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "deception"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "fire"
+     ],
+     "spell_hint": "hellish rebuke",
+     "opposition_dc": 13,
+     "success_text": "You find a loophole. Barely.",
+     "fail_text": "You owe a demon one tavern visit. Weird. Okay."
+    },
+    {
+     "id": "s9_artificer",
+     "text": "Your repair stall explodes.",
+     "class": "artificer",
+     "stat_weights": {
+      "int": 2
+     },
+     "skills": [
+      "investigation"
+     ],
+     "style": "ranged",
+     "spell_tags": [
+      "trick"
+     ],
+     "spell_hint": "grease",
+     "opposition_dc": 13,
+     "success_text": "Insurance pays out! You meant to do that.",
+     "fail_text": "No insurance. A crater, though. Nice crater."
+    },
+    {
+     "id": "s9_barbarian",
+     "text": "Get in a brawl with a whole ogre wedding party.",
+     "class": "barbarian",
+     "stat_weights": {
+      "str": 2,
+      "con": 1
+     },
+     "skills": [
+      "athletics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "You win. The bride proposes. You decline.",
+     "fail_text": "You're carried out like a groom."
+    },
+    {
+     "id": "s9_monk",
+     "text": "Get kicked out of the monastery for laughing during silence week.",
+     "class": "monk",
+     "stat_weights": {
+      "wis": 1,
+      "dex": 1
+     },
+     "skills": [
+      "acrobatics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "It was worth it. You leave enlightened, with snacks.",
+     "fail_text": "You laughed at the abbot. It was a big one."
+    },
+    {
+     "id": "s9_druid",
+     "text": "Let the pigeons run the city council for a day.",
+     "class": "druid",
+     "stat_weights": {
+      "wis": 2,
+      "cha": 1
+     },
+     "skills": [
+      "nature"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "thunder"
+     ],
+     "spell_hint": "thunderwave",
+     "opposition_dc": 13,
+     "success_text": "Honestly, best council ever.",
+     "fail_text": "Chaos. Feathers. Policy."
+    },
+    {
+     "id": "s9_ranger",
+     "text": "Accidentally trap a noble in a net.",
+     "class": "ranger",
+     "stat_weights": {
+      "dex": 1,
+      "wis": 1
+     },
+     "skills": [
+      "survival"
+     ],
+     "style": "ranged",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "He's grateful. He was being chased by a goose.",
+     "fail_text": "He's furious. He's a goose lover."
+    },
+    {
+     "id": "s9_fighter",
+     "text": "Fight a duel over a bad review you wrote.",
+     "class": "fighter",
+     "stat_weights": {
+      "str": 2
+     },
+     "skills": [
+      "athletics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "You win, and the review stands.",
+     "fail_text": "You lose, and the review is retracted."
+    },
+    {
+     "id": "s9_bard",
+     "text": "Play at a royal wedding and forget the ending.",
+     "class": "bard",
+     "stat_weights": {
+      "cha": 2,
+      "dex": 1
+     },
+     "skills": [
+      "performance"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "psychic"
+     ],
+     "spell_hint": "dissonant whispers",
+     "opposition_dc": 13,
+     "success_text": "You improvise. Standing ovation.",
+     "fail_text": "You improvise. Standing confusion."
+    }
+   ],
+   "order": 9,
+   "next": 10
+  },
+  {
+   "id": 10,
+   "key": "s10_tavern",
+   "title": "The Leaking Tankard",
+   "text": "Broke, shoeless, and fleeing your disaster, you stagger into the Leaking Tankard, the last tavern before the edge of the map. Every stool is taken by other people with the same expression.",
+   "options": [
+    {
+     "id": "s10_cleric",
+     "text": "Bless the kitchen. It needs it.",
+     "class": "cleric",
+     "stat_weights": {
+      "wis": 2
+     },
+     "skills": [
+      "religion"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "heal",
+      "light"
+     ],
+     "spell_hint": "purify food and drink",
+     "opposition_dc": 13,
+     "success_text": "The stew stops moving.",
+     "fail_text": "The stew blesses you back."
+    },
+    {
+     "id": "s10_druid",
+     "text": "Make friends with the tavern rats.",
+     "class": "druid",
+     "stat_weights": {
+      "wis": 2
+     },
+     "skills": [
+      "animal_handling"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "nature"
+     ],
+     "spell_hint": "speak with animals",
+     "opposition_dc": 13,
+     "success_text": "The rats warn you something's off.",
+     "fail_text": "The rats ask for rent."
+    },
+    {
+     "id": "s10_rogue",
+     "text": "Find the darkest corner table.",
+     "class": "rogue",
+     "stat_weights": {
+      "dex": 2
+     },
+     "skills": [
+      "stealth"
+     ],
+     "style": "sneaky",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Perfect spot. You can see everyone's purse.",
+     "fail_text": "Someone's already there. It's the bar's cat."
+    },
+    {
+     "id": "s10_barbarian",
+     "text": "Take a stool by force.",
+     "class": "barbarian",
+     "stat_weights": {
+      "str": 2
+     },
+     "skills": [
+      "intimidation"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Stool won. The previous owner is fine. Probably.",
+     "fail_text": "The stool breaks. You sit on the floor with dignity."
+    },
+    {
+     "id": "s10_warlock",
+     "text": "Meet the demon you owe a tavern visit.",
+     "class": "warlock",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "deception"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "force"
+     ],
+     "spell_hint": "eldritch blast",
+     "opposition_dc": 13,
+     "success_text": "He just wanted a drink. You both chill.",
+     "fail_text": "He orders everything on your tab."
+    },
+    {
+     "id": "s10_artificer",
+     "text": "Fix the tavern's leaking tankard sign.",
+     "class": "artificer",
+     "stat_weights": {
+      "int": 2
+     },
+     "skills": [
+      "investigation"
+     ],
+     "style": "ranged",
+     "spell_tags": [
+      "trick"
+     ],
+     "spell_hint": "mending",
+     "opposition_dc": 13,
+     "success_text": "It stops leaking! The landlady loves you.",
+     "fail_text": "It leaks harder. Onto you."
+    },
+    {
+     "id": "s10_monk",
+     "text": "Sit on the ceiling beam.",
+     "class": "monk",
+     "stat_weights": {
+      "dex": 2
+     },
+     "skills": [
+      "acrobatics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "Nobody bothers you. Great view.",
+     "fail_text": "The beam is wet. Ow."
+    },
+    {
+     "id": "s10_fighter",
+     "text": "Stand at the bar and order the strongest thing.",
+     "class": "fighter",
+     "stat_weights": {
+      "con": 2,
+      "str": 1
+     },
+     "skills": [
+      "athletics"
+     ],
+     "style": "melee",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "You drink it. You can see sounds.",
+     "fail_text": "You drink it. You can't see."
+    },
+    {
+     "id": "s10_bard",
+     "text": "Get on the table and start a song.",
+     "class": "bard",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "performance"
+     ],
+     "style": "support",
+     "spell_tags": [
+      "psychic",
+      "charm"
+     ],
+     "spell_hint": "vicious mockery",
+     "opposition_dc": 13,
+     "success_text": "The whole tavern joins in.",
+     "fail_text": "The whole tavern throws food."
+    },
+    {
+     "id": "s10_ranger",
+     "text": "Sit with your back to the wall, watching the doors.",
+     "class": "ranger",
+     "stat_weights": {
+      "dex": 2,
+      "wis": 1
+     },
+     "skills": [
+      "perception"
+     ],
+     "style": "ranged",
+     "spell_tags": [],
+     "spell_hint": null,
+     "opposition_dc": 13,
+     "success_text": "You spot everything. Mostly a suspicious barrel.",
+     "fail_text": "You fall asleep watching."
+    },
+    {
+     "id": "s10_sorcerer",
+     "text": "Light the fireplace with a snap.",
+     "class": "sorcerer",
+     "stat_weights": {
+      "cha": 2
+     },
+     "skills": [
+      "arcana"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "fire"
+     ],
+     "spell_hint": "fire bolt",
+     "opposition_dc": 13,
+     "success_text": "Cozy! Everyone warms up.",
+     "fail_text": "The fire is purple and sings. Badly."
+    },
+    {
+     "id": "s10_wizard",
+     "text": "Read the tavern's ancient menu for hidden lore.",
+     "class": "wizard",
+     "stat_weights": {
+      "int": 2
+     },
+     "skills": [
+      "history"
+     ],
+     "style": "magic",
+     "spell_tags": [
+      "detect"
+     ],
+     "spell_hint": "detect magic",
+     "opposition_dc": 13,
+     "success_text": "The menu is magic. Something's waking up.",
+     "fail_text": "You order the \"Dragon Platter.\" Uh oh."
+    },
+    {
+     "id": "s10_paladin",
+     "text": "Pay for a round you can't afford.",
+     "class": "paladin",
+     "stat_weights": {
+      "cha": 2,
+      "str": 1
+     },
+     "skills": [
+      "persuasion"
+     ],
+     "style": "melee",
+     "spell_tags": [
+      "protect"
+     ],
+     "spell_hint": "heroism",
+     "opposition_dc": 13,
+     "success_text": "The room loves you. The barkeep starts a tab.",
+     "fail_text": "The barkeep starts a big tab."
+    }
+   ],
+   "order": 10,
+   "next": "tavern_hook",
+   "outro_hook": {
+    "text": "Mid-chorus, the floor burps. The Leaking Tankard is not a building: it is an ancient Tavern Mimic, and it has just swallowed the cellar, the beer, and the landlady's late husband's urn. Landlady Mags Thimbleby slams the door, bars it with a broom, and announces that everyone currently in her tavern is now jointly responsible for the bill, the beer, and the urn. The only way out is down: the mimic's stomach, locally known as the Gullet, opens behind the bar. A notice is already nailed up: 'ADVENTURERS WANTED. Must be present. You are present.' You look at the other shoeless idiots in the room. They look at you. To make it legal, she hands out name tags: you are now staff of 'Thimbleby Tankard Recovery, LLC,' each with a job title she makes up on the spot (Chief Beverage Officer, Head of Urn, Senior Floor Apologist...). Team-up achieved.",
+    "forced_team_up": true,
+    "next": "batch:b1-p1-t1"
+   }
+  }
+ ]
+}

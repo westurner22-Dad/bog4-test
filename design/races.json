@@ -1,0 +1,200 @@
+{
+ "note": "Short pre-made backgrounds. Players may ADD (player_additions) but not delete. optional_joke_line is applied by the engine to every player except Wes (applies_to). Lines are warm, fond past experiences, not identity labels or punchlines.",
+ "races": [
+  {
+   "id": "dwarf_hill",
+   "name": "Dwarf Hill",
+   "background": "Hill clan: Raised in the deepest copper mine in Alabamantia, where shoes were banned after the Great Boot Collapse. Knows forty words for rock and zero for 'enough ale.' Grandma still sends beard-oil care packages.",
+   "skills": [
+    "history",
+    "medicine"
+   ],
+   "speed": 25,
+   "player_additions": "",
+   "extra_line": "Spent one long, cozy winter in the mine discovering that the foreman's laugh made the whole tunnel feel warm, and still smiles about it.",
+   "optional_joke_line": "Spent one long, cozy winter in the mine discovering that the foreman's laugh made the whole tunnel feel warm, and still smiles about it.",
+   "applies_to": "all_except_wes",
+   "extra_line_target": "sheet.background.extra_line"
+  },
+  {
+   "id": "dwarf_mountain",
+   "name": "Dwarf Mountain",
+   "background": "Mountain clan: Raised in the deepest copper mine in Alabamantia, where shoes were banned after the Great Boot Collapse. Knows forty words for rock and zero for 'enough ale.' Grandma still sends beard-oil care packages.",
+   "skills": [
+    "athletics",
+    "history"
+   ],
+   "speed": 25,
+   "player_additions": "",
+   "extra_line": "Spent one long, cozy winter in the mine discovering that the foreman's laugh made the whole tunnel feel warm, and still smiles about it.",
+   "optional_joke_line": "Spent one long, cozy winter in the mine discovering that the foreman's laugh made the whole tunnel feel warm, and still smiles about it.",
+   "applies_to": "all_except_wes",
+   "extra_line_target": "sheet.background.extra_line"
+  },
+  {
+   "id": "elf_high",
+   "name": "Elf High",
+   "background": "High elf: Two hundred years old and still considered 'a promising youngster' by family. Has taken a gap century. Twice. Claims bare feet help them 'hear the forest'; mostly they hear twigs.",
+   "skills": [
+    "arcana",
+    "history"
+   ],
+   "speed": 30,
+   "player_additions": "",
+   "extra_line": "Once spent a dreamy elven decade with a fellow archer of the same gender and remembers it like a favorite song.",
+   "optional_joke_line": "Once spent a dreamy elven decade with a fellow archer of the same gender and remembers it like a favorite song.",
+   "applies_to": "all_except_wes",
+   "extra_line_target": "sheet.background.extra_line"
+  },
+  {
+   "id": "elf_wood",
+   "name": "Elf Wood",
+   "background": "Wood elf: Two hundred years old and still considered 'a promising youngster' by family. Has taken a gap century. Twice. Claims bare feet help them 'hear the forest'; mostly they hear twigs.",
+   "skills": [
+    "nature",
+    "survival"
+   ],
+   "speed": 35,
+   "player_additions": "",
+   "extra_line": "Once spent a dreamy elven decade with a fellow archer of the same gender and remembers it like a favorite song.",
+   "optional_joke_line": "Once spent a dreamy elven decade with a fellow archer of the same gender and remembers it like a favorite song.",
+   "applies_to": "all_except_wes",
+   "extra_line_target": "sheet.background.extra_line"
+  },
+  {
+   "id": "halfling_lightfoot",
+   "name": "Halfling Lightfoot",
+   "background": "Lightfoot: Born in a hole with second breakfast already on the table. Halflings of Alabamantia never wore shoes anyway, so this was the one part of life that went to plan. Owns an alarming number of recipe cards.",
+   "skills": [
+    "stealth",
+    "persuasion"
+   ],
+   "speed": 25,
+   "player_additions": "",
+   "extra_line": "Had one memorable harvest summer with the miller's handsome kid (same gender, great biceps) and still bakes a pie in their honor every year.",
+   "optional_joke_line": "Had one memorable harvest summer with the miller's handsome kid (same gender, great biceps) and still bakes a pie in their honor every year.",
+   "applies_to": "all_except_wes",
+   "extra_line_target": "sheet.background.extra_line"
+  },
+  {
+   "id": "halfling_stout",
+   "name": "Halfling Stout",
+   "background": "Stout: Born in a hole with second breakfast already on the table. Halflings of Alabamantia never wore shoes anyway, so this was the one part of life that went to plan. Owns an alarming number of recipe cards.",
+   "skills": [
+    "athletics",
+    "medicine"
+   ],
+   "speed": 25,
+   "player_additions": "",
+   "extra_line": "Had one memorable harvest summer with the miller's handsome kid (same gender, great biceps) and still bakes a pie in their honor every year.",
+   "optional_joke_line": "Had one memorable harvest summer with the miller's handsome kid (same gender, great biceps) and still bakes a pie in their honor every year.",
+   "applies_to": "all_except_wes",
+   "extra_line_target": "sheet.background.extra_line"
+  },
+  {
+   "id": "human",
+   "name": "Human",
+   "background": "Ordinary in every respect, which is exactly what makes them dangerous. Was voted 'Most Likely to Be Here' in school. Their parents are proud, in a general way.",
+   "skills": [
+    "athletics",
+    "persuasion"
+   ],
+   "speed": 30,
+   "player_additions": "",
+   "extra_line": "Spent one memorable summer discovering that the stable hand of the same gender had very nice forearms, and doesn't regret a thing.",
+   "optional_joke_line": "Spent one memorable summer discovering that the stable hand of the same gender had very nice forearms, and doesn't regret a thing.",
+   "applies_to": "all_except_wes",
+   "extra_line_target": "sheet.background.extra_line"
+  },
+  {
+   "id": "dragonborn",
+   "name": "Dragonborn",
+   "background": "Hatched from a very large egg that the village used as a doorstop for a year first. Breathes fire only when sneezing or nervous, so: often. Their clan motto is 'Mostly Fireproof.'",
+   "skills": [
+    "intimidation",
+    "history"
+   ],
+   "speed": 30,
+   "player_additions": "",
+   "extra_line": "Shared a few sparkly, smoky evenings with a fellow dragonborn of the same gender at the clan bonfire and calls it 'the warmest season of my life.'",
+   "optional_joke_line": "Shared a few sparkly, smoky evenings with a fellow dragonborn of the same gender at the clan bonfire and calls it 'the warmest season of my life.'",
+   "applies_to": "all_except_wes",
+   "extra_line_target": "sheet.background.extra_line"
+  },
+  {
+   "id": "gnome_rock",
+   "name": "Gnome Rock",
+   "background": "Rock gnome: Invented the self-tying shoelace before realizing nobody in Alabamantia owns shoes. Has a hat for every occasion and an occasion for every hat. Talks fast. Thinks faster. Explodes things fastest.",
+   "skills": [
+    "investigation",
+    "arcana"
+   ],
+   "speed": 25,
+   "player_additions": "",
+   "extra_line": "Once spent a giddy month co-inventing a clockwork music box with a same-gender gnome tinkerer, and the tune still plays in their head.",
+   "optional_joke_line": "Once spent a giddy month co-inventing a clockwork music box with a same-gender gnome tinkerer, and the tune still plays in their head.",
+   "applies_to": "all_except_wes",
+   "extra_line_target": "sheet.background.extra_line"
+  },
+  {
+   "id": "gnome_forest",
+   "name": "Gnome Forest",
+   "background": "Forest gnome: Invented the self-tying shoelace before realizing nobody in Alabamantia owns shoes. Has a hat for every occasion and an occasion for every hat. Talks fast. Thinks faster. Explodes things fastest.",
+   "skills": [
+    "nature",
+    "deception"
+   ],
+   "speed": 25,
+   "player_additions": "",
+   "extra_line": "Once spent a giddy month co-inventing a clockwork music box with a same-gender gnome tinkerer, and the tune still plays in their head.",
+   "optional_joke_line": "Once spent a giddy month co-inventing a clockwork music box with a same-gender gnome tinkerer, and the tune still plays in their head.",
+   "applies_to": "all_except_wes",
+   "extra_line_target": "sheet.background.extra_line"
+  },
+  {
+   "id": "half_elf",
+   "name": "Half Elf",
+   "background": "Too elvish for the humans, too human for the elves, perfect for the tavern. Has learned to be charming at both family reunions, which happen on the same day, out of spite.",
+   "skills": [
+    "persuasion",
+    "insight"
+   ],
+   "speed": 30,
+   "player_additions": "",
+   "extra_line": "Had a sweet, sun-drenched fling with a traveling poet of the same gender and keeps one of the poems folded in their pocket.",
+   "optional_joke_line": "Had a sweet, sun-drenched fling with a traveling poet of the same gender and keeps one of the poems folded in their pocket.",
+   "applies_to": "all_except_wes",
+   "extra_line_target": "sheet.background.extra_line"
+  },
+  {
+   "id": "half_orc",
+   "name": "Half Orc",
+   "background": "Softest heart in Alabamantia, biggest underbite. Cries at weddings, funerals, and sunsets. Once punched a bear out of politeness. Grandma says they're 'a good boy/girl/whatever, mostly.'",
+   "skills": [
+    "intimidation",
+    "survival"
+   ],
+   "speed": 30,
+   "player_additions": "",
+   "extra_line": "Spent one tender summer realizing the blacksmith's apprentice of the same gender had a lovely smile, and treasures every moment.",
+   "optional_joke_line": "Spent one tender summer realizing the blacksmith's apprentice of the same gender had a lovely smile, and treasures every moment.",
+   "applies_to": "all_except_wes",
+   "extra_line_target": "sheet.background.extra_line"
+  },
+  {
+   "id": "tiefling",
+   "name": "Tiefling",
+   "background": "Has horns, a tail, and a mother who insists it's 'just a phase.' Gets blamed for every fire in town, which is fair about a third of the time. Very good at making a dramatic entrance.",
+   "skills": [
+    "deception",
+    "arcana"
+   ],
+   "speed": 30,
+   "player_additions": "",
+   "extra_line": "Had a sizzling-but-sweet season with a same-gender fortune teller who predicted it would be great, and for once the fortune was right.",
+   "optional_joke_line": "Had a sizzling-but-sweet season with a same-gender fortune teller who predicted it would be great, and for once the fortune was right.",
+   "applies_to": "all_except_wes",
+   "extra_line_target": "sheet.background.extra_line"
+  }
+ ]
+}
