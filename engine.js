@@ -325,6 +325,7 @@
     const arr = x => Array.isArray(x) ? x.filter(v => v != null) : x && typeof x === 'object' ? Object.values(x) : [];
     d.players = toObj(d.players); d.world = d.world || {}; d.world.flags = d.world.flags || {};
     d.applied_rulings = d.applied_rulings || {}; d.request_rolls = d.request_rolls || {};
+    if (!d.party && Object.values(d.players).some(pl => pl && arr(pl.history).length)) d.party = { started_at: 1, turn: null, last_move_at: 0, legacy: true };   // games already in play before v0.7 count as started
     for (const pl of Object.values(d.players)) {
       pl.flags = pl.flags || {}; pl.history = arr(pl.history); if (pl.cursor === undefined) pl.cursor = null; pl.location = pl.location || 'town'; if (pl.sheet && !pl.stage) pl.stage = (pl.history || []).length ? 'tavern' : 'store';
       const s = pl.sheet; if (!s) { pl.sheet = null; continue; }
