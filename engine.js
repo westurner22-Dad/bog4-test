@@ -260,7 +260,29 @@
     doc.applied_rulings[id] = true; return doc;
   }
 
-  const api = { CLASSES, winBonus, freePoints, allocCheck, baseFor, CAP, builderDc, builderRoll, scenarioOrder, tally, buildSheet, derived, modFor, buyable, buy, levelUp, validateBatch, mergeBatches,
+  // Firebase RTDB drops empty arrays/objects and turns {1:..,2:..} into [null,..]. Restore the shape the engine expects.
+  function normalize(d) {
+    if (!d || typeof d !== 'object') return d;
+    const toObj = x => Array.isArray(x) ? Object.fromEntries(x.map((v, i) => [String(i), v]).filter(([, v]) => v != null)) : (x || {});
+    const arr = x => Array.isArray(x) ? x.filter(v => v != null) : x && typeof x === 'object' ? Object.values(x) : [];
+    d.players = toObj(d.players); d.world = d.world || {}; d.world.flags = d.world.flags || {};
+    d.applied_rulings = d.applied_rulings || {}; d.request_rolls = d.request_rolls || {};
+    for (const pl of Object.values(d.players)) {
+      pl.flags = pl.flags || {}; pl.history = arr(pl.history); if (pl.cursor === undefined) pl.cursor = null; pl.location = pl.location || 'town';
+      const s = pl.sheet; if (!s) { pl.sheet = null; continue; }
+      for (const k of ['equipment', 'attacks', 'features', 'skills']) s[k] = arr(s[k]);
+      s.saves = s.saves || {}; s.coin = Object.assign({ gp: 0, sp: 0, cp: 0 }, s.coin); s.hp = Object.assign({ max: 1, current: 0, temp: 0 }, s.hp);
+      s.background = Object.assign({ base: '', extra_line: null }, s.background); s.background.additions = arr(s.background.additions);
+      s.builder = s.builder || {}; s.builder.alloc = s.builder.alloc || {}; s.builder.picks = arr(s.builder.picks); s.builder.rolls = arr(s.builder.rolls);
+      s.portrait = s.portrait || { status: 'pending' }; s.dead = !!s.dead; s.deaths = s.deaths || 0; s.derp = !!s.derp; s.is_wes = !!s.is_wes;
+      s.xp = s.xp || 0; s.personality = s.personality || ''; s.subclass = s.subclass || null; s.fighting_style = s.fighting_style || null;
+      if (s.spells) for (const k of ['cantrips', 'level1', 'spellbook', 'prepared']) if (k in s.spells || k === 'cantrips') s.spells[k] = arr(s.spells[k]);
+      if (s.spells === undefined) s.spells = null;
+      s.hit_dice = s.hit_dice || { die: 'd8', total: 1, left: 1 };
+    }
+    return d;
+  }
+  const api = { normalize, CLASSES, winBonus, freePoints, allocCheck, baseFor, CAP, builderDc, builderRoll, scenarioOrder, tally, buildSheet, derived, modFor, buyable, buy, levelUp, validateBatch, mergeBatches,
     cfg, RESPAWN_FALLBACK, currentTurn, isGhost, playTurn, applyEffects, respawnAll, label, newGame, requestLog, applyRulings, rollRequest, freeSoloGhosts, freeGhostId, toCp };
   if (typeof module !== 'undefined') module.exports = api; else root.Engine = api;
 })(this);

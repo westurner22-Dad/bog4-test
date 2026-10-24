@@ -9,7 +9,8 @@ let NEW_WES_HASH = null;
 if (!H.get('g')) { const g = rndHex(16), w = rndHex(16); NEW_WES_HASH = hashHex(w); history.replaceState(null, '', `#g=${g}&p=1&w=${w}`); H.set('g', g); H.set('p', '1'); H.set('w', w); }
 const GID = H.get('g'), P = +H.get('p') || 1, W = H.get('w');
 let IS_WES = false;
-const C = window.GAME_CONFIG, store = makeStore(GID, C);
+const C = window.GAME_CONFIG, store0 = makeStore(GID, C);
+const store = Object.assign(Object.create(store0), { get: async () => Engine.normalize(await store0.get()), subscribe: cb => store0.subscribe(d => cb(Engine.normalize(d))) });
 const portraitCache = {};
 // respawn_lines: read from Designer data if present (builder.json or campaign data), else Engine fallback
 const setRespawnLines = () => { Engine.cfg.respawnLines = (D.builder && D.builder.respawn_lines) || (D.campaign && D.campaign.respawn_lines) || null; };
