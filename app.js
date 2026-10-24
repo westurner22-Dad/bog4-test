@@ -166,6 +166,21 @@ function bindStore() { $('#leavestore') && ($('#leavestore').onclick = async () 
   document.querySelectorAll('[data-buy]').forEach(b => b.onclick = async () => {
   try { const it = D.store.items.find(i => i.id === b.dataset.buy); await saveWith(d => Engine.buy(d, P, it)); lastResult = `<p class="ok">Bought ${esc(it.name)}.</p>`; render(); }
   catch (e) { lastResult = `<p class="bad">${esc(e.message)}</p>`; render(); } }); }
+// v4 Adventure Log: everything said, done, rolled, gained and lost, newest first.
+let advFilter = 'all';
+function renderAdventure() {
+  const all = Engine.adventureLog(doc, queues, chat, reqs, rulings), keep = { all: () => true, rolls: e => !!e.roll, talk: e => ['say', 'action', 'chat'].includes(e.kind), loot: e => /gained|lost|gp|sp|cp|HP/.test(e.detail || '') };
+  const L = all.filter(keep[advFilter] || keep.all).reverse(), icon = { turn: '🗺️', say: '💬', action: '🎭', chat: '🗨️', buy: '🛒', ruling: '⚖️', gm: '⚖️', request: '⚖️', build: '🧙' };
+  const when = ts => ts ? new Date(ts).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
+  const roll = r => `<span class="${r.ok ? 'ok' : 'bad'}">🎲 ${r.die}${r.mod ? (r.mod > 0 ? ' +' : ' −') + Math.abs(r.mod) : ''} = ${r.total} vs DC ${r.dc}${r.skill ? ' (' + esc(r.skill) + ')' : ''}: ${r.ok ? 'success' : 'fail'}</span>`;
+  return `<div class="card" id="advlog"><h2>📖 Adventure Log</h2><div class="row" id="advf">${[['all', 'All'], ['rolls', 'Rolls'], ['talk', 'Said & done'], ['loot', 'Gains & losses']].map(([k, l]) => `<button data-advf="${k}" class="${advFilter === k ? 'on' : ''}">${l}</button>`).join('')}</div>
+    <p class="dim">${all.length} entries, newest first.</p>
+    ${L.map(e => `<div class="adv" data-kind="${e.kind}"><p><span class="dim">${when(e.ts)}</span> ${icon[e.kind] || '•'} <b>${esc(e.who)}</b>${e.ghost ? ' <span class="ghost">👻</span>' : ''}
+      ${e.kind === 'turn' ? `· ${esc(e.title)}<br>chose <i>${esc(e.choice)}</i>${e.roll ? '<br>' + roll(e.roll) : ''}<br>${esc(e.text)}`
+        : e.kind === 'say' ? esc(e.text) : e.kind === 'action' ? esc(e.text) : `${esc(e.text)}${e.roll ? '<br>' + roll(e.roll) : ''}`}
+      ${e.detail ? `<br><span class="delta">${esc(e.detail)}</span>` : ''}${e.died ? ' <span class="bad">💀</span>' : ''}</p></div>`).join('') || '<p class="dim">Nothing yet. Your story starts in the tavern.</p>'}</div>`;
+}
+function bindAdventure() { document.querySelectorAll('[data-advf]').forEach(b => b.onclick = () => { advFilter = b.dataset.advf; render(); }); }
 function renderLog() {
   const L = Engine.requestLog(reqs, rulings, doc.request_rolls || {});
   return `<div class="card"><h2>📜 Requests, actions &amp; dialogue</h2><div id="reqlog">${L.map(r => `<p${r.kind ? ` class="act" data-kind="${esc(r.kind)}"` : ''}>${r.kind === 'say' ? '💬 ' : r.kind === 'action' ? '🎭 ' : ''}<b>${esc(r.who)}</b>${r.gm ? ' <span class="dim">(GM ruling)</span>' : ''}: ${esc(r.text)}<br>
@@ -173,11 +188,19 @@ function renderLog() {
 }
 function bindLog() { document.querySelectorAll('[data-rr]').forEach(b => b.onclick = async () => { await save(Engine.rollRequest(doc, reqs, rulings, b.dataset.rr, P)); }); }
 function renderChat() { return `<div class="card" id="chat"><h2>💬 Chat</h2><div id="chatlog">${chat.map(m => { const s = (doc.players[m.p] || {}).sheet;
-  return `<p><b>${esc(s ? s.name : 'Player ' + m.p)}${m.ghost ? ' <span class="ghost">👻 ghost</span>' : ''}</b> <span class="dim">${new Date(m.ts).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span>: ${esc(m.text)}</p>`; }).join('')}</div>
-  <form class="row" id="chatform"><input id="chatin" maxlength="300" autocomplete="off" placeholder="Message everyone…"><button>Send</button></form></div>
-  <div class="card" id="act"><h2>🎭 Action &amp; dialogue</h2><form id="actform"><div class="row"><select id="actkind"><option value="action">I do…</option><option value="say">I say…</option></select>
-    <input id="actin" maxlength="280" autocomplete="off" placeholder="Describe what your character does or says"><button>Submit</button></div></form>
-    <p class="dim">Your party sees it in chat; the GM reads it with tonight's requests and weaves it into the story (it shows in the Requests log).</p></div>`; }
+  return `<p><b>${esc(s ? s.name : 'Player ' + m.p)}${m.ghost ? ' <span class="ghost">👻 ghost</span>' : ''}</b> <span class="dim">${new Date(m.ts).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span>: ${esc(m.text)}</p>`; }).join('')}</div></div>`; }
+// v4 typing fix: the chat input and the Action & dialogue box live in #dock, OUTSIDE #app, built once and never
+// re-rendered, so live updates (doc, chat, polls, 60 s timer) can't recreate the inputs, drop focus or close the iOS keyboard.
+function ensureDock() {
+  const dk = $('#dock'); if (dk.dataset.built) return; dk.dataset.built = '1'; dk.hidden = false;
+  dk.innerHTML = `<form class="row card dockchat" id="chatform"><input id="chatin" maxlength="300" autocomplete="off" enterkeyhint="send" placeholder="Message everyone…"><button>Send</button></form>
+  <div class="card" id="act"><h2>🎭 Action &amp; dialogue</h2><form id="actform"><select id="actkind" aria-label="Action or dialogue"><option value="action">I do…</option><option value="say">I say…</option></select>
+    <textarea id="actin" rows="2" maxlength="280" autocomplete="off" enterkeyhint="send" placeholder="Describe what your character does or says"></textarea><button id="actgo">Submit</button></form>
+    <p class="dim">Your party sees it in chat and in the Adventure Log; the GM reads it with tonight's requests and weaves it into the story.</p></div>`;
+  $('#chatform').onsubmit = async e => { e.preventDefault(); const v = $('#chatin').value.trim(); if (!v) return; $('#chatin').value = ''; await store.chatSend(P, v.slice(0, 300), Engine.isGhost(doc, P)); };
+  $('#actform').onsubmit = async e => { e.preventDefault(); const v = $('#actin').value.trim(); if (!v) return; $('#actin').value = ''; await sendAct($('#actkind').value, v.slice(0, 280)); };
+  $('#actin').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('#actform').requestSubmit(); } });
+}
 // Round 2 #2: in-character action / dialogue -> chat (party sees it now) + requests with kind (GM sees it, Requests log).
 async function sendAct(kind, v) {
   const sh = me().sheet, t = Engine.currentTurn(doc, queues, P), txt = kind === 'say' ? `says: “${v}”` : `does: ${v}`;
@@ -193,14 +216,12 @@ function render() {
   const inTown = Engine.canShop(pl);
   const hold = (() => { try { const i = Engine.turnInfo(doc, queues, P, Date.now()); return i.state === 'yours' ? P : i.state === 'theirs' ? i.holder : 0; } catch { return 0; } })();
   html += `<div id="party">${Object.entries(doc.players).filter(([, x]) => x.sheet).map(([k, x]) => `<span class="pm${+k === P ? ' me' : ''}">${esc(x.sheet.name)}${x.sheet.dead ? ' <span class="ghost">👻 ghost</span>' : ''}${+k === hold && Object.keys(doc.players).length > 1 ? ' <span class="turnmark">🎯 turn</span>' : ''}</span>`).join('')}</div>`;
-  html += `<nav>${[['turn', 'Turn'], ['sheet', 'Sheets'], inTown && ['store', 'Store'], ['log', 'Requests']].filter(Boolean).map(([k, l]) => `<button data-tab="${k}" class="${tab === k ? 'on' : ''}">${l}</button>`).join('')}</nav>`;
-  html += ({ turn: renderTurn, sheet: renderSheets, store: renderStore, log: renderLog })[tab]() + renderChat();
-  const keep = $('#chatin') ? $('#chatin').value : '', keepR = $('#reqin') ? $('#reqin').value : '', keepA = $('#actin') ? $('#actin').value : '', keepK = $('#actkind') ? $('#actkind').value : 'action';
-  $('#app').innerHTML = html; if ($('#chatin')) $('#chatin').value = keep; if ($('#reqin')) $('#reqin').value = keepR; if ($('#actin')) { $('#actin').value = keepA; $('#actkind').value = keepK; }
+  html += `<nav>${[['turn', 'Turn'], ['sheet', 'Sheets'], inTown && ['store', 'Store'], ['adv', 'Log'], ['log', 'Requests']].filter(Boolean).map(([k, l]) => `<button data-tab="${k}" class="${tab === k ? 'on' : ''}">${l}</button>`).join('')}</nav>`;
+  html += ({ turn: renderTurn, sheet: renderSheets, store: renderStore, adv: renderAdventure, log: renderLog })[tab]() + renderChat();
+  const ae = document.activeElement, keepR = $('#reqin') ? $('#reqin').value : '', fR = ae && ae.id === 'reqin' ? [ae.selectionStart, ae.selectionEnd] : null;
+  $('#app').innerHTML = html; ensureDock(); if ($('#reqin')) { $('#reqin').value = keepR; if (fR) { $('#reqin').focus(); $('#reqin').setSelectionRange(...fR); } }
   document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; lastResult = ''; render(); });
-  ({ turn: bindTurn, sheet: bindSheets, store: bindStore, log: bindLog })[tab]();
-  $('#chatform').onsubmit = async e => { e.preventDefault(); const v = $('#chatin').value.trim(); if (!v) return; $('#chatin').value = ''; await store.chatSend(P, v.slice(0, 300), Engine.isGhost(doc, P)); };
-  $('#actform').onsubmit = async e => { e.preventDefault(); const v = $('#actin').value.trim(); if (!v) return; $('#actin').value = ''; await sendAct($('#actkind').value, v.slice(0, 280)); };
+  ({ turn: bindTurn, sheet: bindSheets, store: bindStore, adv: bindAdventure, log: bindLog })[tab]();
   const cl = $('#chatlog'); cl.scrollTop = cl.scrollHeight;
 }
 
@@ -217,7 +238,7 @@ function render() {
   if (!doc.players[P]) { const n = JSON.parse(JSON.stringify(doc)); n.players[P] = Engine.newGame(P).players[P]; await store.cas(doc.v, n); doc = await store.get(); }
   store.subscribe(d => { doc = d; if (Object.keys(d.players).join() !== seatKey) remerge(lastRemote); else render(); });
   store.chatSubscribe(m => { chat = m; render(); });
-  store.watchMap('requests', m => { reqs = m; tab === 'log' && render(); });
+  let lastReq = ''; store.watchMap('requests', m => { const k = JSON.stringify(m); if (k === lastReq) return; lastReq = k; reqs = m; (tab === 'log' || tab === 'adv') && render(); });
   setInterval(() => { if (doc && (Engine.currentTurn(doc, queues, P) === null || Engine.turnInfo(doc, queues, P, Date.now()).state !== 'yours')) render(); }, 60000);
   let lastRul = ''; store.watchMap('rulings', async m => { const k = JSON.stringify(m); if (k === lastRul) return; lastRul = k; rulings = m; const n = Engine.applyRulings(doc, reqs, rulings);
     if (JSON.stringify(n.applied_rulings) !== JSON.stringify(doc.applied_rulings)) await save(n); else render(); });

@@ -103,7 +103,8 @@
     if (!canShop(doc0.players[p])) throw new Error('the store is in town');
     const doc = clone(doc0), sh = doc.players[p].sheet, cost = Math.round(item.price_gp * 100) * qty, have = toCp(sh.coin);
     if (cost > have) throw new Error('not enough coin');
-    sh.coin = fromCp(have - cost); addItem(sh, item, qty); return doc;
+    sh.coin = fromCp(have - cost); addItem(sh, item, qty);
+    logEvent(doc, { ts: Date.now(), p: +p, kind: 'buy', text: `bought ${item.name}${qty > 1 ? ' ×' + qty : ''}`, delta: { [p]: { cp: -cost, gained: [qty > 1 ? `${item.name} ×${qty}` : item.name] } } }); return doc;
   }
 
   // ---- level 2 (milestone; standard 5e 2014 level-2 features). Spell picks for new half-casters wait on Teacher.
@@ -202,7 +203,22 @@
   function respawnAll(doc) { Object.values(doc.players).forEach(x => { if (x.sheet && x.sheet.dead) { x.sheet.dead = false; x.sheet.hp.current = x.sheet.hp.max; x.respawned = (x.respawned || 0) + 1; } }); }
   // Resolve option i of p's current turn with a live random roll. Derp: the shown option is ignored, a random real one resolves,
   // and the result text starts with a random derp_prefix (builder.derp.derp_prefixes). Returns new doc.
-  function playTurn(doc0, queues, p, i, rng = Math.random, derpCfg = null) {
+  // ---- v4 Adventure Log: snapshot -> delta (hp, coin, items, xp, location, death/respawn) for every seat ----
+  const snap = doc => Object.fromEntries(Object.entries(doc.players || {}).filter(([, x]) => x && x.sheet).map(([k, x]) => [k, { hp: x.sheet.hp.current, cp: toCp(x.sheet.coin), xp: x.sheet.xp || 0, loc: x.location || 'town', dead: !!x.sheet.dead, deaths: x.sheet.deaths || 0, rsp: x.respawned || 0,
+    items: Object.fromEntries((x.sheet.equipment || []).map(e => [e.name || e.id, e.qty || 1])) }]));
+  function deltaOf(a, b) {
+    const out = {};
+    for (const [k, y] of Object.entries(b)) { const x = a[k]; if (!x) continue; const d = {};
+      if (y.hp !== x.hp) d.hp = y.hp - x.hp; if (y.cp !== x.cp) d.cp = y.cp - x.cp; if (y.xp !== x.xp) d.xp = y.xp - x.xp;
+      if (y.loc !== x.loc) d.loc = [x.loc, y.loc]; if (y.deaths > x.deaths || (y.dead && !x.dead)) d.died = true; if (y.rsp > x.rsp || (!y.dead && x.dead)) d.respawned = true;
+      const gain = [], lost = []; for (const n of new Set([...Object.keys(x.items), ...Object.keys(y.items)])) { const q = (y.items[n] || 0) - (x.items[n] || 0); if (q > 0) gain.push(q > 1 ? `${n} ×${q}` : n); if (q < 0) lost.push(-q > 1 ? `${n} ×${-q}` : n); }
+      if (gain.length) d.gained = gain; if (lost.length) d.lost = lost; if (Object.keys(d).length) out[k] = d; }
+    return out;
+  }
+  // Non-turn events (purchases, GM rulings with effects, respawns) go to doc.events (append-only, capped).
+  function logEvent(doc, ev) { doc.events = arr(doc.events); doc.events.push(ev); if (doc.events.length > 400) doc.events = doc.events.slice(-400); }
+  const arr = x => Array.isArray(x) ? x.filter(v => v != null) : x && typeof x === 'object' ? Object.values(x) : [];
+  function playTurn(doc0, queues, p, i, rng = Math.random, derpCfg = null, now = Date.now()) {
     const doc = clone(doc0), pl = doc.players[p], t = currentTurn(doc, queues, p);
     if (!t) throw new Error('no turn');
     if (stageOf(pl) !== 'tavern') throw new Error('visit the store first');
@@ -210,12 +226,13 @@
     let prefix = '';
     if (pl.sheet.derp) { i = Math.floor(rng() * t.options.length); const px = (derpCfg && derpCfg.derp_prefixes) || []; if (px.length) prefix = px[Math.floor(rng() * px.length)] + ' '; }
     const o = t.options[i]; if (!o) throw new Error('bad option');
-    let ok = true, entry = { turn_id: t.turn_id, option: i };
+    let ok = true, entry = { turn_id: t.turn_id, option: i, ts: now, title: t.title || '', label: o.label || '' }; const before = snap(doc);
     if (o.roll) { const die = d20(rng), m = modFor(pl.sheet, o.roll.skill), total = die + m; ok = total >= o.roll.dc;
       Object.assign(entry, { die, mod: m, total, dc: o.roll.dc, skill: o.roll.skill }); }
     entry.ok = ok; const br = ok ? o.success : (o.fail || o.success); entry.text = prefix + (br.text || ''); if (prefix) entry.derp = true;
     delete pl.respawn_line; applyEffects(doc, p, br.effects);
     if (pl.respawn_line) { entry.respawn_line = pl.respawn_line; entry.text += (entry.text ? ' ' : '') + pl.respawn_line; delete pl.respawn_line; }
+    const dl = deltaOf(before, snap(doc)); if (Object.keys(dl).length) entry.delta = dl;
     (pl.history = pl.history || []).push(entry);
     const q = queues[p], idx = q.findIndex(x => x.turn_id === t.turn_id);
     pl.cursor = br.goto || (q[idx + 1] || {}).turn_id || null;
@@ -267,7 +284,7 @@
   function takeTurn(doc0, queues, p, i, rng = Math.random, derpCfg = null, now = Date.now()) {
     const info = turnInfo(doc0, queues, p, now);
     if (!(info.state === 'yours' || (info.state === 'theirs' && info.canSkip))) throw new Error(info.state === 'theirs' ? 'not your turn' : 'waiting for the party');
-    const doc = playTurn(doc0, queues, p, i, rng, derpCfg), ord = seatsOf(doc).filter(q => stageOf(doc.players[q]) === 'tavern');
+    const doc = playTurn(doc0, queues, p, i, rng, derpCfg, now), ord = seatsOf(doc).filter(q => stageOf(doc.players[q]) === 'tavern');
     doc.party = Object.assign({}, doc.party, { started_at: (doc.party && doc.party.started_at) || now, last_move_at: now,
       turn: ord[(ord.indexOf(p) + 1) % ord.length], last_p: p }); return doc;
   }
@@ -309,7 +326,8 @@
       if (ru.ruling === 'roll') continue;
       if (ru.ruling === 'party_start') { if (ru.gm) Object.assign(doc, gmStartParty(doc, ru)); doc.applied_rulings[id] = true; continue; }
       const pl = doc.players[rq.p];
-      if (ru.ruling === 'granted' && pl && pl.sheet) applyEffects(doc, rq.p, ru.effects);
+      if (ru.ruling === 'granted' && pl && pl.sheet) { const b0 = snap(doc); applyEffects(doc, rq.p, ru.effects); const dl = deltaOf(b0, snap(doc));
+        if (Object.keys(dl).length) logEvent(doc, { ts: ru.ruled_at || Date.now(), p: rq.p, kind: 'ruling', ruling_id: id, text: ru.reason || 'GM ruling', delta: dl }); }
       doc.applied_rulings[id] = true;
     }
     return doc;
@@ -319,9 +337,58 @@
     const doc = clone(doc0), r = reqs[id], ru = rulings[id];
     if (!r || !ru || ru.ruling !== 'roll' || r.p !== p || doc.applied_rulings[id]) throw new Error('nothing to roll');
     const die = d20(rng), m = ru.skill ? modFor(doc.players[p].sheet, ru.skill) : 0, total = die + m, ok = total >= ru.dc;
-    doc.request_rolls[id] = { die, mod: m, total, dc: ru.dc, ok };
-    if (ok) applyEffects(doc, p, ru.effects);
+    const b0 = snap(doc); if (ok) applyEffects(doc, p, ru.effects);
+    doc.request_rolls[id] = { die, mod: m, total, dc: ru.dc, ok, ts: Date.now() }; const dl = deltaOf(b0, snap(doc)); if (Object.keys(dl).length) doc.request_rolls[id].delta = dl;
     doc.applied_rulings[id] = true; return doc;
+  }
+
+  // ---- v4 Adventure Log ----
+  // One chronological list per game, derived from data every seat can already read: players[].history (turns: choice,
+  // roll, result, delta), doc.events (purchases, GM effects), chat (speech, 🎭 actions, 💬 dialogue), requests + rulings
+  // + request_rolls, builder rolls. Old history entries (before v4) have no ts/delta: their effects are re-derived from
+  // the batch option, and they sort before timestamped entries in seat/turn order.
+  const fmtCp = cp => { const a = Math.abs(cp), g = Math.floor(a / 100), sp = Math.floor(a % 100 / 10), c = a % 10; return (cp < 0 ? '−' : '+') + [g && g + ' gp', sp && sp + ' sp', c && c + ' cp'].filter(Boolean).join(' '); };
+  function describeDelta(d, nameOf) {
+    const out = [];
+    for (const [k, x] of Object.entries(d || {})) { if (!x) continue; const bits = [];
+      if (x.hp) bits.push(`${x.hp > 0 ? '+' : '−'}${Math.abs(x.hp)} HP`); if (x.cp) bits.push(fmtCp(x.cp)); if (x.xp) bits.push(`+${x.xp} XP`);
+      if (x.gained) bits.push('gained ' + x.gained.join(', ')); if (x.lost) bits.push('lost ' + x.lost.join(', '));
+      if (x.loc) bits.push(`moved to the ${x.loc[1]}`); if (x.died) bits.push('💀 fell and became a ghost'); if (x.respawned) bits.push('✨ respawned');
+      if (bits.length) out.push((Object.keys(d).length > 1 ? nameOf(k) + ': ' : '') + bits.join(', ')); }
+    return out.join('; ');
+  }
+  function describeEffects(effects, sh) {
+    const bits = [];
+    for (const f of effects || []) {
+      if (f.type === 'hp' && f.delta) bits.push(`${f.delta > 0 ? '+' : '−'}${Math.abs(f.delta)} HP${f.target === 'party' ? ' (party)' : ''}`);
+      else if (f.type === 'coin') { const cp = toCp(f); if (cp) bits.push(fmtCp(cp)); }
+      else if (f.type === 'xp' && f.amount) bits.push(`+${f.amount} XP`);
+      else if (f.type === 'item_add' && f.item) bits.push('gained ' + (f.item.name || f.item.id));
+      else if (f.type === 'item_remove') bits.push('lost ' + f.id);
+      else if (f.type === 'location' && f.value) bits.push(`moved to the ${f.value}`);
+      else if (f.type === 'respawn') bits.push('✨ respawned'); }
+    return [...new Set(bits)].join(', ');
+  }
+  function adventureLog(doc, queues = {}, chat = [], reqs = {}, rulings = {}, rolls = null) {
+    const out = [], players = doc.players || {}, nameOf = k => { const x = players[k]; return x && x.sheet ? x.sheet.name : 'Player ' + k; };
+    rolls = rolls || doc.request_rolls || {};
+    const turnOf = id => { for (const q of Object.values(queues || {})) { const t = (q || []).find(x => x.turn_id === id); if (t) return t; } return null; };
+    for (const [k, x] of Object.entries(players)) {
+      if (!x || !x.sheet) continue; const sh = x.sheet, br = arr((sh.builder || {}).rolls);
+      if (br.length) out.push({ ts: 0, ord: [0, +k, 0], p: +k, kind: 'build', text: `${sh.name} the ${sh.class} joins the party`, detail: `builder rolls: ${br.filter(r => r && r.ok).length}/${br.length} won (${br.map(r => r ? r.die : '?').join(', ')})` });
+      arr(x.history).forEach((h, i) => {
+        const t = turnOf(h.turn_id), o = t && t.options[h.option], d = h.delta ? describeDelta(h.delta, nameOf) : o ? describeEffects((h.ok === false && o.fail ? o.fail : o.success).effects, sh) : '';
+        out.push({ ts: h.ts || 0, ord: [1, i, +k], p: +k, kind: 'turn', title: h.title || (t && t.title) || h.turn_id, choice: h.label || (o && o.label) || '', roll: h.die ? { skill: h.skill || (o && o.roll && o.roll.skill) || '', die: h.die, mod: h.mod, total: h.total, dc: h.dc, ok: h.ok } : null, text: h.text || '', detail: d, died: !!(h.delta && Object.values(h.delta).some(z => z && z.died)) }); }); }
+    for (const e of arr(doc.events)) out.push({ ts: e.ts || 0, ord: [2, 0, e.p || 0], p: e.p, kind: e.kind, text: e.text, detail: describeDelta(e.delta, nameOf) });
+    for (const m of chat || []) { const t = String(m.text || ''), kind = t.startsWith('🎭 ') ? 'action' : t.startsWith('💬 ') ? 'say' : 'chat';
+      out.push({ ts: m.ts || 0, ord: [3, 0, m.p], p: m.p, kind, text: kind === 'chat' ? `“${t}”` : t.slice(2).trim(), ghost: !!m.ghost }); }
+    for (const r of requestLog(reqs, rulings, rolls)) { if (r.kind) continue;   // actions/dialogue already come from chat
+      const ru = r.ruling, ro = r.roll;
+      out.push({ ts: r.ts || 0, ord: [4, 0, r.p || 0], p: r.p, kind: r.gm ? 'gm' : 'request', text: r.gm ? (ru && ru.reason) || r.text : `asked the GM: ${r.text}`,
+        detail: !r.gm && ru ? `GM: ${ru.ruling}${ru.dc ? ' (DC ' + ru.dc + ')' : ''}${ru.reason ? ', ' + ru.reason : ''}` : '', roll: ro ? { skill: ru && ru.skill || '', die: ro.die, mod: ro.mod, total: ro.total, dc: ro.dc, ok: ro.ok } : null });
+      if (ro && ro.delta) out.push({ ts: (ro.ts || r.ts || 0) + 1, ord: [4, 1, r.p], p: r.p, kind: 'ruling', text: 'request result', detail: describeDelta(ro.delta, nameOf) }); }
+    const cmp = (a, b) => (a.ts - b.ts) || a.ord.reduce((z, v, i) => z || v - b.ord[i], 0);
+    return out.sort(cmp).map(e => ({ ...e, who: e.p ? nameOf(e.p) : 'GM' }));
   }
 
   // Firebase RTDB drops empty arrays/objects and turns {1:..,2:..} into [null,..]. Restore the shape the engine expects.
@@ -330,7 +397,7 @@
     const toObj = x => Array.isArray(x) ? Object.fromEntries(x.map((v, i) => [String(i), v]).filter(([, v]) => v != null)) : (x || {});
     const arr = x => Array.isArray(x) ? x.filter(v => v != null) : x && typeof x === 'object' ? Object.values(x) : [];
     d.players = toObj(d.players); d.world = d.world || {}; d.world.flags = d.world.flags || {};
-    d.applied_rulings = d.applied_rulings || {}; d.request_rolls = d.request_rolls || {};
+    d.applied_rulings = d.applied_rulings || {}; d.events = arr(d.events); d.request_rolls = d.request_rolls || {};
     if (!d.party && Object.values(d.players).some(pl => pl && arr(pl.history).length)) d.party = { started_at: 1, turn: null, last_move_at: 0, legacy: true };   // games already in play before v0.7 count as started
     for (const pl of Object.values(d.players)) {
       pl.flags = pl.flags || {}; pl.history = arr(pl.history); if (pl.cursor === undefined) pl.cursor = null; pl.location = pl.location || 'town'; if (pl.sheet && !pl.stage) pl.stage = (pl.history || []).length ? 'tavern' : 'store';
@@ -347,7 +414,7 @@
     }
     return d;
   }
-  const api = { PARTY, turnInfo, gmStartParty, takeTurn, stageOf, leaveStore, canShop, normalize, CLASSES, winBonus, freePoints, allocCheck, baseFor, CAP, builderDc, builderRoll, scenarioOrder, tally, buildSheet, derived, modFor, buyable, buy, shopCategory, SHOP_CATS, levelUp, validateBatch, mergeBatches,
+  const api = { adventureLog, describeDelta, deltaOf, PARTY, turnInfo, gmStartParty, takeTurn, stageOf, leaveStore, canShop, normalize, CLASSES, winBonus, freePoints, allocCheck, baseFor, CAP, builderDc, builderRoll, scenarioOrder, tally, buildSheet, derived, modFor, buyable, buy, shopCategory, SHOP_CATS, levelUp, validateBatch, mergeBatches,
     cfg, RESPAWN_FALLBACK, currentTurn, isGhost, playTurn, applyEffects, respawnAll, label, newGame, requestLog, applyRulings, rollRequest, freeSoloGhosts, freeGhostId, toCp };
   if (typeof module !== 'undefined') module.exports = api; else root.Engine = api;
 })(this);
